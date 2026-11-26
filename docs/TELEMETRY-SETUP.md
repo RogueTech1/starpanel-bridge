@@ -38,6 +38,8 @@ The first setting enables telemetry on builds that start the service. Upstream r
 
 ## Prove each connection stage
 
+The client defaults to loopback port 2942. If the game is deliberately listening elsewhere (some community examples use 50051), set the matching port in **Diagnostics → Local game API endpoint**. This changes only the client and cannot restore a disabled service. See [community research](COMMUNITY-API-RESEARCH.md).
+
 In the channel's `Game.log`, look for the setting being read, registration of `sc.game.telemetry.v1.GameTelemetryService`, and the local listener at `127.0.0.1:2942`. After spawning, look for initialization of the local player's telemetry component. A player component initialization line alone does not prove the service registered.
 
 From PowerShell:

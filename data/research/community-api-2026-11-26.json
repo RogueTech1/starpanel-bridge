@@ -1,0 +1,130 @@
+{
+  "format": "starpanel-community-review-1",
+  "reviewed": "2026-11-26",
+  "baseline": {
+    "gameFields": 174,
+    "sha256": "26fc796bf0432b8d7b0320131bbe67cc0ea4333cad84548d3dea1202355467b9"
+  },
+  "scope": "Static source/definition review. No upstream programs, player captures or credentials redistributed. Original StarPanel computed readouts are not additional CIG protobuf fields.",
+  "sources": [
+    {
+      "repository": "https://github.com/SpartanWolf723/sc-telemetry-api",
+      "commit": "2e67b1dd659d9542f8c456cfe7bfea471caf0613",
+      "declaredLicense": "No license identified in reviewed repository metadata",
+      "schema": {
+        "sha256": [
+          "3e3333c76ba497966d9e3e54f737dcd2337b05e576cfc5158a0a6bdda438189c"
+        ],
+        "catalogEntries": 129,
+        "newPathsComparedWithSavedPtu": [],
+        "methods": [
+          "TelemetryStream",
+          "TriggerGameAction",
+          "ListTriggerableActions"
+        ]
+      }
+    },
+    {
+      "repository": "https://github.com/magmahindenburg/StarCitizenTelemetry",
+      "commit": "80241810a5a5f6b710aef0dc664646a1ae4d3c8b",
+      "declaredLicense": "No license identified in reviewed repository metadata",
+      "schema": {
+        "sha256": [
+          "291930ecf235d6a73a24449f0d782cb1e07381a5f1d67e3337e52758f4beed06",
+          "17f5b3d97216621270b62009a96bd34d2bb970c89b414197b88f285a7f6f18eb"
+        ],
+        "catalogEntries": 129,
+        "newPathsComparedWithSavedPtu": [],
+        "methods": [
+          "TelemetryStream",
+          "TriggerGameAction",
+          "ListTriggerableActions"
+        ]
+      }
+    },
+    {
+      "repository": "https://github.com/zoomphoto/Star-Citizen-Telemetry",
+      "commit": "487d751774b18cd04e573c4c9a85d0a8c926f2e1",
+      "declaredLicense": "No license identified in reviewed repository metadata",
+      "schema": {
+        "sha256": [
+          "9ab8fd9ddca48e270022df681c88a157ba38d1d21de589b2f443dc7b575e6033",
+          "66a36e7b3636f8a295ae4c8a75d3373d214355f54fb8aa6814c28fd61ddbee80"
+        ],
+        "catalogEntries": 129,
+        "newPathsComparedWithSavedPtu": [],
+        "methods": [
+          "TelemetryStream",
+          "TriggerGameAction",
+          "ListTriggerableActions"
+        ]
+      }
+    },
+    {
+      "repository": "https://github.com/dembadger/star-citizen-telemetry-simulator",
+      "commit": "2b344eb2089da1021f8428f2fff8917adb60c020",
+      "declaredLicense": "MIT",
+      "schema": {
+        "sha256": [
+          "f713e99cdeb0323e924cbd7e4ec971a81dc4f1bd7e111c80d4daeee825f4ca2e"
+        ],
+        "catalogEntries": 48,
+        "newPathsComparedWithSavedPtu": [],
+        "methods": [
+          "ListTriggerableActions",
+          "TelemetryStream"
+        ]
+      }
+    },
+    {
+      "repository": "https://github.com/ShipBit/wingman-ai",
+      "commit": "575f1acf47ebc30393d09b691a9e1e5107ed2e48",
+      "declaredLicense": "GPL-3.0",
+      "schema": {
+        "sha256": [
+          "07e6b6eb896c24f7a44d574263ecaa06c3481be845cf7df7b770dceb2a5474b0"
+        ],
+        "catalogEntries": 124,
+        "newPathsComparedWithSavedPtu": [],
+        "methods": [
+          "TelemetryStream"
+        ]
+      }
+    },
+    {
+      "repository": "https://github.com/scpages/telemetry",
+      "commit": "362587bb55e6826a7b30fda6ff0f8bee045909bb",
+      "declaredLicense": "GPL-3.0"
+    },
+    {
+      "repository": "https://github.com/dodoslavn/StarCitizen_Telemetry",
+      "commit": "98c536b3946c3903a4ba531c17bfd1522d6f8a17",
+      "declaredLicense": "No license identified in reviewed repository metadata"
+    },
+    {
+      "repository": "https://github.com/TirolaBua/Starmetry",
+      "commit": "1b71dccc6c28f8931b186c3aa301630e89cc7ac1",
+      "declaredLicense": "No license identified in reviewed repository metadata"
+    },
+    {
+      "repository": "https://github.com/NoNaNelson/StarCitizenTelemetryServerExample",
+      "commit": "a32b4b0f7afad18e5489357884e14cb7926b1570",
+      "declaredLicense": "No license identified in reviewed repository metadata"
+    },
+    {
+      "repository": "https://github.com/Hexadian-Corporation/hexadian-telemetry-bridge",
+      "commit": "c78e3617b8c6cb5b1e5618c67cc23268c120d52a",
+      "declaredLicense": "Modified PolyForm Noncommercial"
+    },
+    {
+      "repository": "https://github.com/RomainFleury/sc-telemetry-hub",
+      "commit": "5f3d787183b8f8f7fbd8d77f1b6764885b1d3cba",
+      "declaredLicense": "MIT"
+    },
+    {
+      "repository": "https://github.com/Purzifal/sc_make_proto",
+      "commit": "90a491d362c2c76fef086080e00b1f0ff0b79917",
+      "declaredLicense": "GPL-3.0"
+    }
+  ]
+}

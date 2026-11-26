@@ -10,7 +10,7 @@ const entries=buildReference({activeFields:live,liveFields:live,ptuFields:ptu,ac
 const field=key=>entries.find(e=>e.key===key);
 const snapshot={actions:[],demo:false,packet:{stale:false},raw:{vehicle:{state:{lights_enabled:false,flight:{instruments:{speed:0}}}}}};
 test('reference separates supported LIVE paths and historical actions from PTU definitions',()=>{
- assert.equal(entries.filter(e=>e.kind==='output').length,174);
+ assert.equal(entries.filter(e=>e.kind==='output').length,179);
  assert.equal(entries.filter(e=>e.kind==='output'&&!e.liveSchema).length,50);
  assert.equal(entries.filter(e=>e.kind==='input').length,112);
  assert.equal(field('game.debug.fps').activeSchema,false);
@@ -38,7 +38,7 @@ test('new runtime-advertised actions join the lookup without editing the histori
  assert.equal(entry.descriptionSource,'Unreviewed action name');
 });
 test('every bundled field and action has reviewed purpose text without inventing unknown units',()=>{
- for(const entry of entries){assert.ok(entry.label&&entry.description,entry.key);assert.equal(entry.descriptionSource,'StarPanel reference notes',entry.key);}
+ for(const entry of entries){assert.ok(entry.label&&entry.description,entry.key);assert.ok(['StarPanel reference notes','StarPanel computed readout'].includes(entry.descriptionSource),entry.key);}
  assert.equal(field('vehicle.state.flight.state.gear').label,'Landing gear position');
  assert.match(field('v_retract_landing_system').description,/retraction/);
  assert.match(field('force_feedback.angular.x.resistance').description,/not a world position/);

@@ -16,7 +16,7 @@ Every bundled input and output has a plain-English label and purpose description
 
 **Expected states / values** explains each output's contract: friendly enum meanings with exact constant names/numeric codes, true/false meanings, collection handling, integer/text representation and known numeric guidance. Gear distinguishes retracted, deploying, deployed and retracting. Unknown ranges remain explicitly unverified; missing/stale data is separate from OFF/zero. Numeric display guidance does not clamp values or guarantee a particular ship emits the field.
 
-The browser includes 174 output definitions and 112 historical API action references. Fifty outputs are PTU additions beyond the LIVE catalog. A PTU definition is not evidence of a working listener, a received value or an executable input. See [activation steps](TELEMETRY-SETUP.md) and [research evidence](SC-TELEMETRY-DECK.md).
+The browser includes 174 game output definitions, five separately labeled StarPanel-computed readouts and 112 historical API action references. Fifty game outputs are PTU additions beyond the LIVE catalog. A definition is not proof of a received value or executable input. See [activation](TELEMETRY-SETUP.md), [schema evidence](SC-TELEMETRY-DECK.md) and [community research/computed readouts](COMMUNITY-API-RESEARCH.md).
 
 ## Use a result in a panel
 

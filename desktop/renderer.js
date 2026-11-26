@@ -78,6 +78,7 @@ async function refresh() {
     }
     $('switchStatus').textContent=Object.entries(s.switchStatus??{}).map(([name,status])=>`${name}: ${status}`).join('\n')||'No maintained-switch positions received.';
     if(!$('master').classList.contains('hidden'))$('masterFlashLog').textContent=s.flash.log.join('\n');
+    if(document.activeElement!==$('apiPort'))$('apiPort').value=s.apiEndpoint.split(':').at(-1);$('apiEndpoint').textContent=s.apiEndpoint;
     if(!$('raw').classList.contains('hidden')){$('rawFrame').textContent = JSON.stringify(s.raw, null, 2); $('log').textContent = s.logs.map(l => `${l.time} ${l.message}`).join('\n');}
   } catch(e) {$('status').textContent = e.message;}
   setTimeout(refresh, 400);
@@ -85,5 +86,6 @@ async function refresh() {
 void ports(); void refresh();
 for(const button of document.querySelectorAll('[data-help]'))button.onclick=handle(()=>window.bridge.help(button.dataset.help));
 $('enableTelemetry').onclick=handle(async()=>{$('setupResult').textContent=await window.bridge.enableTelemetry();});
+$('saveApiPort').onclick=async()=>{try{$('apiPortResult').textContent=await window.bridge.telemetryPort(Number($('apiPort').value));}catch(e){$('apiPortResult').textContent=e.message;}};
 if(localStorage.getItem('setupCollapsed')==='true')$('welcome').open=false;
 $('welcome').addEventListener('toggle',()=>localStorage.setItem('setupCollapsed',String(!$('welcome').open)));

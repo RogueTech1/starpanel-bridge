@@ -34,7 +34,7 @@ export class Bridge extends EventEmitter {
       this.panel.disconnect('Connecting to game');
       this.cancelStream = this.game.stream(frame => this.receive(frame), err => {
         const message=err?.message??'Disconnected';
-        this.panel.disconnect(message.includes('ECONNREFUSED') ? 'No local telemetry server on 127.0.0.1:2942. Enable startup settings and restart both RSI Launcher and the game. This PTU build may disable the service.' : message);
+        this.panel.disconnect(message.includes('ECONNREFUSED') ? `No local telemetry server on ${this.game.address??'127.0.0.1:2942'}. Enable startup settings and restart both RSI Launcher and the game. This PTU build may disable the service.` : message);
         this.log(`Game disconnected: ${message}`);
         if (this.running) this.retry = setTimeout(connect, 3000);
       });
@@ -48,7 +48,7 @@ export class Bridge extends EventEmitter {
         this.receive({vehicle: {state: {lights_enabled: this.demoLights, flight: {
           state: {gear: this.demoGear ? 'VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED' : 'VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTED'},
           instruments: {speed: Math.round(120 + 40 * Math.sin(t)), altitude: Math.round(800 + 50 * Math.sin(t / 3)), radar_altitude: 120}
-        }}}, actor: {vitals: {health: {current: 100}, oxygen: {current: 100}}}});
+        }}}, weapons:{weapons:[{name:'Simulator weapon A',ready_to_fire:true},{name:'Simulator weapon B',ready_to_fire:Math.sin(t)>0}],countermeasures:[{type:'COUNTERMEASURE_TYPE_DECOY',amount:32},{type:'COUNTERMEASURE_TYPE_NOISE',amount:3}]}, actor: {vitals: {health: {current: 100}, oxygen: {current: 100}}}});
       }, 100);
       void this.refreshActions();
     }

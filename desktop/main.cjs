@@ -5,7 +5,7 @@ const os = require('node:os');
 const {randomBytes} = require('node:crypto');
 const base = path.resolve(__dirname, '..');
 let win, bridge, schema, Game, loadSchema, Bridge, NetworkPanels, network, catalog, ports, validateProfile, compileProfile, flashFirmware, logs = [];
-let flashing=false, flashState={busy:false,log:[]},BOARDS,isAvr,ensureUniqueSlaveAddress,flashAvr,flashMaster,BIOS_FIELDS;
+let flashing=false, flashState={busy:false,log:[]},BOARDS,isAvr,ensureUniqueSlaveAddress,flashAvr,flashMaster,BIOS_FIELDS,localEndpoint;
 const smoke = process.argv.includes('--smoke-test');
 const liveCheck = process.argv.includes('--live-check');
 const startHidden = process.argv.includes('--hidden');
@@ -68,7 +68,7 @@ function start(demo) {
   bridge?.stop();
   const config = JSON.parse(fs.readFileSync(configPath));
   if(smoke)config.buttons={gear:'v_deploy_landing_system',lights:'v_lights',flashlight:'pl_toggle_flashlight'};
-  bridge = new Bridge({config, game: demo ? {close() {}} : new Game(schema), demo});
+  bridge = new Bridge({config, game: demo ? {close() {}} : new Game(schema,localEndpoint(settings.telemetryPort??2942)), demo});
   bridge.on('log', log);
   bridge.start();
   for (const port of settings.ports) {
@@ -82,13 +82,15 @@ function start(demo) {
 }
 app.whenReady().then(async () => {
   ({Game, loadSchema} = await import('../src/game.mjs'));
+  ({localEndpoint}=await import('../src/endpoint.mjs'));
+  try{localEndpoint(settings.telemetryPort??2942);}catch{settings.telemetryPort=2942;}
   ({Bridge} = await import('../src/bridge.mjs'));
   ({NetworkPanels} = await import('../src/network.mjs'));
   ({validateProfile,compileProfile,BOARDS,isAvr,ensureUniqueSlaveAddress} = await import('../src/profiles.mjs'));
   ({flashAvr,flashMaster}=await import('../src/avr.mjs'));
   ({BIOS_FIELDS}=await import('../src/dcsbios.mjs'));
   ({flashFirmware} = await import('../src/flasher.mjs'));
-  ({catalog} = await import('../src/catalog.mjs'));
+  ({panelCatalog:catalog} = await import('../src/catalog.mjs'));
   const {describeOutput}=await import('../src/io-descriptions.mjs');
   const {assertApiAction}=await import('../src/api-only.mjs');
   ({SerialPort: ports} = await import('serialport'));
@@ -108,7 +110,7 @@ app.whenReady().then(async () => {
   win.setMenuBarVisibility(false);
   win.webContents.on('will-navigate', event => event.preventDefault());
   win.loadFile(path.join(__dirname, 'index.html'));
-  ipcMain.handle('snapshot', () => ({...bridge.status(), raw: bridge.panel.frame, logs,
+  ipcMain.handle('snapshot', () => ({...bridge.status(), raw: bridge.panel.frame, logs,apiEndpoint:localEndpoint(settings.telemetryPort??2942),
     flash:flashState,
     network: {...(network?.status() ?? {listening: false, port: 2943, clients: []}), enabled: settings.networkEnabled === true,
       addresses: Object.values(os.networkInterfaces()).flat().filter(a => a && a.family === 'IPv4' && !a.internal).map(a => a.address).sort((a,b)=>Number(privateAddress(b))-Number(privateAddress(a)))}}));
@@ -117,6 +119,7 @@ app.whenReady().then(async () => {
     settings.networkEnabled = enabled; saveSettings(); await restartNetwork();
   });
   ipcMain.handle('network-token', () => settings.networkToken);
+  ipcMain.handle('telemetry-port',(_event,port)=>{if(flashing)throw Error('Wait for firmware upload to finish');const endpoint=localEndpoint(port);settings.telemetryPort=port;saveSettings();start(bridge.demo);return 'API client reconnected to '+endpoint+'. Game settings were not changed.';});
   ipcMain.handle('panels',()=>panels);
   const {hardwareLibrary}=await import('../src/hardware-library.mjs');
   ipcMain.handle('hardware',()=>({boards:BOARDS,library:hardwareLibrary()}));
@@ -316,7 +319,10 @@ app.whenReady().then(async () => {
           const inputRows=document.querySelectorAll('.reference-entry').length;
           filter('referenceDirection','output');
           const outputRows=document.querySelectorAll('.reference-entry').length;
-          if(inputRows<100||outputRows!==174)throw Error('Unified input/output reference failed');
+          if(inputRows<100||outputRows!==179)throw Error('Unified input/output reference failed');
+          filter('referenceScope','derived');
+          if(document.querySelectorAll('.reference-entry').length!==5||!document.getElementById('referenceDetail').textContent.includes('not a game protobuf field')||!document.getElementById('referenceReading').textContent.includes('Simulator computed value'))throw Error('Computed API readout labeling failed');
+          filter('referenceScope','all');
           filter('referenceSearch','Landing gear position');
           if(document.querySelectorAll('.reference-entry').length!==1||!document.getElementById('referenceDetail').textContent.includes('Moving toward the deployed position.')||!document.getElementById('referenceDetail').textContent.includes('Retracting'))throw Error('Friendly purpose/state lookup failed');
           filter('referenceSearch','');
@@ -349,6 +355,8 @@ app.whenReady().then(async () => {
           const previousBoard=document.getElementById('panelBoard').value;
           document.getElementById('panelBoard').value='@master';document.getElementById('panelBoard').dispatchEvent(new Event('change'));
           if(document.getElementById('master').classList.contains('hidden')||document.getElementById('panelBoard').value!==previousBoard||!document.getElementById('master').textContent.includes('D3 TX enable'))throw Error('Separate master role navigation failed');
+          let refused=false;try{await window.bridge.telemetryPort(65536);}catch{refused=true;}
+          if(!refused)throw Error('Invalid API endpoint accepted');
           return {before: before.packet, after: after.packet, ack, fieldCount: fields.length, portCount: ports.length,
             cards: document.querySelectorAll('.value').length, status: document.getElementById('status').textContent,designerSaved:true,inputRows,outputRows,liveRows};
         })()`);

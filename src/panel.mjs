@@ -1,7 +1,9 @@
 import {randomUUID} from 'node:crypto';
 import {apiOnlyConfig,isApiAction} from './api-only.mjs';
+import {derivedValue} from './derived.mjs';
 
 export function atPath(value, path) {
+  if(path.startsWith('derived.'))return derivedValue(value,path);
   for (const part of path.split('.')) {
     if (value === null || typeof value !== 'object' || !Object.hasOwn(value, part)) return null;
     value = value[part];

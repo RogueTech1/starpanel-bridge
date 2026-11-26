@@ -40,6 +40,11 @@
       "path": "data/research/sc-telemetry-deck-2026-11-26.json",
       "bytes": 12753,
       "sha256": "89697f666b13ae92694f3b070c52e3a6fc07e9b7797dd555ce4539e459891d8b"
+    },
+    {
+      "path": "data/research/community-api-2026-11-26.json",
+      "bytes": 4619,
+      "sha256": "ee5c8e2aece12484ab8d5699f4d77f0f347733dea531465c7f6211e3d7b18500"
     }
   ]
 }

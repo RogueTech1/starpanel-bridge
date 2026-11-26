@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import protobuf from 'protobufjs';
+import {createHash} from 'node:crypto';
+import {catalog} from '../src/catalog.mjs';
+import {loadSchema,SERVICE} from '../src/game.mjs';
+const [baseline,...files]=process.argv.slice(2);
+if(!baseline||!files.length)throw Error('Usage: node scripts/compare-proto.mjs baseline.desc candidate.proto [additional-types.proto ...]');
+const root=new protobuf.Root(),hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+for(const file of files)protobuf.parse(fs.readFileSync(file,'utf8'),root,{keepCase:true});
+root.resolveAll();
+const previous=catalog(loadSchema(baseline)),current=catalog(root),paths=new Set(previous.map(f=>f.path));
+console.log(JSON.stringify({format:'starpanel-proto-review-1',baselineSha256:hash(fs.readFileSync(baseline)),candidateSha256:files.map(file=>hash(fs.readFileSync(file))),baselineFields:previous.length,candidateFields:current.length,addedFields:current.filter(f=>!paths.has(f.path)),methods:Object.keys(root.lookupService(SERVICE).methods)},null,2));

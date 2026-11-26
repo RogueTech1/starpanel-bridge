@@ -17,6 +17,7 @@ function booleanLabels(path){
 }
 export function outputStates(field){
  const path=field.path;
+ if(field.derived)return {summary:field.expectedSummary,unavailable,states:[]};
  if(field.enums){
   const names=Object.keys(field.enums),parts=names.map(n=>n.split('_'));let common=0;
   while(parts.every(p=>p.length>common+1&&p[common]===parts[0][common]))common++;

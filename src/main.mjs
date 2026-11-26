@@ -5,11 +5,12 @@ import readline from 'node:readline';
 import {SerialPort} from 'serialport';
 import {Game, loadSchema} from './game.mjs';
 import {Bridge} from './bridge.mjs';
+import {localEndpoint} from './endpoint.mjs';
 const base = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const option = name => {const i = args.indexOf(name); if (i < 0) return null; if (!args[i+1] || args[i+1].startsWith('--')) throw Error(`${name} needs a value`); return args[i+1];};
 if (args.includes('--help')) {
-  console.log('node src/main.mjs [--demo] [--port COM5,COM6] [--allow-actions] [--schema file.desc] [--config file.json] [--record] [--seconds N]\n--ports lists serial ports. Commands: status, raw, actions, press gear, press lights, quit.');
+  console.log('node src/main.mjs [--demo] [--api-port 2942] [--port COM5,COM6] [--allow-actions] [--schema file.desc] [--config file.json] [--record] [--seconds N]\n--ports lists serial ports. Commands: status, raw, actions, press gear, press lights, quit.');
   process.exit(0);
 }
 if (args.includes('--ports')) {console.table(await SerialPort.list()); process.exit(0);}
@@ -17,7 +18,7 @@ const demo = args.includes('--demo');
 const config = JSON.parse(fs.readFileSync(option('--config') ?? path.join(base, 'panel.json')));
 const local = path.join(base, 'schema/live/sc_extrait.desc');
 const schemaPath = option('--schema') ?? (fs.existsSync(local) ? local : path.join(base, 'vendor/sc-telemetry-deck/schema/sc_extrait.desc'));
-const game = demo ? {close() {}} : new Game(loadSchema(schemaPath));
+const game = demo ? {close() {}} : new Game(loadSchema(schemaPath),localEndpoint(Number(option('--api-port')??2942)));
 const bridge = new Bridge({config, game, demo, allowActions: args.includes('--allow-actions')});
 let recording;
 if (args.includes('--record')) {

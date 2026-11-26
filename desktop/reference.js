@@ -14,9 +14,10 @@ function filtered(){
   if(scope==='live'&&(e.kind!=='output'||!e.liveSchema))return false;
   if(scope==='ptu'&&(e.kind!=='output'||e.liveSchema))return false;
   if(scope==='bus'&&!e.bios)return false;
+  if(scope==='derived'&&!e.derived)return false;
   if($('referenceCategory').value&&e.category!==$('referenceCategory').value)return false;
   if(status==='mapped'&&!mapped(e).length)return false;
-  if(status==='received'&&!['Received','Simulator value','Advertised by game','Simulator action'].includes(referenceReading(e,snapshot).state))return false;
+  if(status==='received'&&!['Received','Simulator value','Computed from API','Simulator computed value','Advertised by game','Simulator action'].includes(referenceReading(e,snapshot).state))return false;
   const address=e.bios?'0x'+e.bios.address.toString(16):'';
   return `${e.label} ${e.description} ${e.key} ${e.category} ${shortType(e)} ${address} ${mapped(e).join(' ')} ${Object.keys(e.enums??{}).join(' ')}`.toLowerCase().includes(q);
  });
@@ -31,8 +32,8 @@ function detail(){
  if(e.unit)pair('Units',e.unit);
  pair('Description',e.descriptionSource);
  if(e.kind==='output'){
-  pair('Schema',`${e.liveSchema?'LIVE 4.10.3 + saved PTU':'Saved PTU only'} · ${e.activeSchema?'in current schema':'outside current schema'}`);
-  pair('Presence',e.presence==='explicit'?'Explicit optional presence':'Wire presence; omitted is not proof of an available value');
+  pair('Schema',e.derived?'Computed locally from received API data; not a game protobuf field':`${e.liveSchema?'LIVE 4.10.3 + saved PTU':'Saved PTU only'} · ${e.activeSchema?'in current schema':'outside current schema'}`);
+  pair('Presence',e.derived?'Requires received source collection: '+e.sources.join(', '):e.presence==='explicit'?'Explicit optional presence':'Wire presence; omitted is not proof of an available value');
   pair('Hardware',e.bios?`ESP32 + Arduino / DCSBIOSKit · 0x${e.bios.address.toString(16)} · ${e.bios.bytes} bytes ASCII`:'ESP32 scalar readout/rules; no assigned StarPanel Arduino address');
   if(e.repeated)pair('Collection','Repeated data needs custom parsing; direct designer insertion is disabled.');
  }else{
@@ -68,7 +69,7 @@ function updateReading(e){
 function draw(){
  if(!snapshot||!entries.length)return;const rows=filtered();
  $('referenceCount').textContent=`${rows.length} matching / ${entries.length} entries`;
- $('referenceStats').textContent=`${entries.filter(e=>e.kind==='output').length} outputs · ${entries.filter(e=>e.kind==='input').length} API references`;
+ $('referenceStats').textContent=`${entries.filter(e=>e.kind==='output'&&!e.derived).length} game outputs + ${entries.filter(e=>e.derived).length} computed · ${entries.filter(e=>e.kind==='input').length} API references`;
  if(!rows.some(e=>e.id===selected)){selected=rows[0]?.id??null;detail();}
  const signature=JSON.stringify([rows.map(e=>e.id),selected]);
  if(signature!==listSignature){listSignature=signature;$('referenceList').replaceChildren();for(const e of rows){const b=node('button',undefined,'reference-entry'+(e.id===selected?' active':''));b.dataset.id=e.id;b.title=e.description;b.append(node('strong',e.label),node('small',e.key),node('small',`${e.kind==='output'?'OUT':'IN'} · ${e.category} · ${shortType(e)}`),node('span','','reference-entry-state'));b.onclick=()=>{selected=e.id;detail();draw();};$('referenceList').append(b);}}

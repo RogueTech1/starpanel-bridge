@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0 — community API research and computed instruments
+
+- Reviewed additional community schemas/projects with pinned source/license metadata. No additional CIG catalog paths or writable methods were established beyond the existing PTU reference.
+- Added five clearly labeled computed API readouts for weapon counts/readiness and decoy/noise stock, with conservative missing/stale/zero handling and no inferred capacity.
+- Added validated loopback-only API port selection in Diagnostics and CLI, without changing game settings or adding an external input path.
+- Added a read-only `.proto` comparison tool and reproducible findings/source attribution. All game interaction remains API-only.
+
 ## 0.9.0 — API interaction only
 
 - Removed the Windows keyboard helper, emulation implementation, key-binding UI and native build/package steps. All game inputs now use advertised API actions.

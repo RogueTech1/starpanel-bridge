@@ -30,6 +30,7 @@ export function codec(root, name) {
 export class Game {
   constructor(root, address = '127.0.0.1:2942') {
     this.root = root;
+    this.address = address;
     this.client = new grpc.Client(address, grpc.credentials.createInsecure(), {
       'grpc.max_reconnect_backoff_ms': 3000
     });

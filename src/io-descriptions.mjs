@@ -1,3 +1,4 @@
+import {DERIVED_FIELDS} from './derived.mjs';
 const words=value=>value.replace(/^v_/, '').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
 const entry=(label,description,unit=null)=>({label,description,unit,descriptionSource:'StarPanel reference notes'});
 const outputRows={};
@@ -135,6 +136,7 @@ const assists={ifcs_coupled:'Coupled flight',ifcs_esp:'Enhanced Stick Precision 
 const power={powerplants:'Powerplants',engines:'Engines',weapons:'Weapons',coolers:'Coolers',life_support:'Life support',gravity_generators:'Gravity generators',sensors:'Sensors',shield_generators:'Shield generators',shield_emitters:'Shield emitters'};
 const annunciators={pwr:'Power',wpn:'Weapons',thr:'Thrusters',shld:'Shields',cool:'Cooling',qdrv:'Quantum drive',radr:'Radar',prox:'Proximity',hit:'Hit',misl:'Missile'};
 export function describeOutput(path){
+ const computed=DERIVED_FIELDS.find(f=>f.path===path);if(computed)return {label:computed.label,description:computed.description,unit:computed.unit,descriptionSource:computed.descriptionSource};
  if(outputRows[path])return outputRows[path];
  let match=path.match(/^actor\.vitals\.(health|oxygen|hunger|thirst|body_temperature)\.(current|max)$/);
  if(match){const label=words(match[1]);return entry(`${label} — ${match[2]==='max'?'maximum':'current'}`,`Reported ${match[2]==='max'?'maximum/reference':'current'} ${label.toLowerCase()} gauge value. Use the paired gauge values; do not assume every gauge is a percentage.`);}

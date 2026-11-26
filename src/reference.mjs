@@ -1,8 +1,10 @@
 import {BIOS_FIELDS} from './dcsbios.mjs';
 import {describeInput,describeOutput} from './io-descriptions.mjs';
 import {outputStates} from './io-states.mjs';
+import {DERIVED_FIELDS} from './derived.mjs';
 
 export function referenceCategory(path){
+ if(path.startsWith('derived.'))return 'StarPanel / Computed readouts';
  if(path.startsWith('actor.vitals'))return 'Character / Vitals';
  if(path.startsWith('actor.environment'))return 'Character / Environment';
  if(path.includes('tracked_contract'))return 'Character / Contracts';
@@ -23,10 +25,10 @@ const inputCategories={lights_controller:'Ship / Lights',player:'Character / Con
 const json=value=>JSON.stringify(value,null,2);
 export function buildReference({activeFields,liveFields,ptuFields,actions,advertisedActions=[],config={}}){
  const active=new Map(activeFields.map(f=>[f.path,f])),live=new Set(liveFields.map(f=>f.path));
- const fields=new Map([...ptuFields,...activeFields].map(f=>[f.path,f]));
+ const fields=new Map([...ptuFields,...activeFields,...DERIVED_FIELDS].map(f=>[f.path,f]));
  const outputs=[...fields.values()].map(f=>{
   const bios=BIOS_FIELDS[f.path]??null;
-  return {id:`output:${f.path}`,kind:'output',key:f.path,category:referenceCategory(f.path),...f,...describeOutput(f.path),expected:outputStates(f),activeSchema:active.has(f.path),liveSchema:live.has(f.path),bios,
+  return {id:`output:${f.path}`,kind:'output',key:f.path,category:referenceCategory(f.path),...f,...describeOutput(f.path),expected:outputStates(f),activeSchema:f.derived?f.sources.every(p=>active.has(p)):active.has(f.path),liveSchema:f.derived?f.sources.every(p=>live.has(p)):live.has(f.path),bios,
    snippets:{mapping:json({fields:{my_readout:f.path}}),component:!f.repeated?json({kind:'readout',label:'Readout',path:f.path}):null,
     arduino:bios?`// StarPanel RS485 map; requires fresh heartbeat/status handling.\nvoid onReadout(char* value) {\n  // Render value on your display.\n}\nDcsBios::StringBuffer<${bios.bufferLength}> readout(0x${bios.address.toString(16)}, onReadout);`:null}};
  });

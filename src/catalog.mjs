@@ -1,3 +1,4 @@
+import {DERIVED_FIELDS} from './derived.mjs';
 export function catalog(root) {
   const rows = [];
   function walk(type, prefix, depth = 0) {
@@ -14,3 +15,4 @@ export function catalog(root) {
   walk(root.lookupType('sc.game.telemetry.v1.TelemetryStreamResponse'), '');
   return rows;
 }
+export const panelCatalog=root=>[...catalog(root),...DERIVED_FIELDS];
