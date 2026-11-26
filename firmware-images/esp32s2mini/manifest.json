@@ -1,0 +1,27 @@
+{
+  "profile": "esp32s2mini",
+  "chip": "ESP32-S2",
+  "minimumFlashBytes": 4194304,
+  "files": [
+    {
+      "name": "bootloader.bin",
+      "address": 4096,
+      "sha256": "34d00eaa9ea72a54d1319d8a91f3b6c3acccf9478e85ba4c75f97034749dc977"
+    },
+    {
+      "name": "partitions.bin",
+      "address": 32768,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    },
+    {
+      "name": "boot_app0.bin",
+      "address": 57344,
+      "sha256": "f94c5d786a7a8fab06ac5d10e33bf37711a6697636dc037559ea19cc410a17f0"
+    },
+    {
+      "name": "firmware.bin",
+      "address": 65536,
+      "sha256": "5f77010a66591bdf3b67ab5820da5f09a3559ae6e4342933bed23cc293dae8b4"
+    }
+  ]
+}

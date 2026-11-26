@@ -1,0 +1,21 @@
+name: Bug report
+description: Report a reproducible app, firmware or documentation problem
+body:
+  - type: markdown
+    attributes:
+      value: Remove Wi-Fi passwords, pairing keys, player names and private logs before posting.
+  - type: input
+    attributes:
+      label: App version and game version/channel
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Exact board, transport, display and pins
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps, expected behavior and actual result
+    validations:
+      required: true

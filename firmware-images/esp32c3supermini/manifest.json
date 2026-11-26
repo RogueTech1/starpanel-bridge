@@ -1,0 +1,27 @@
+{
+  "profile": "esp32c3supermini",
+  "chip": "ESP32-C3",
+  "minimumFlashBytes": 4194304,
+  "files": [
+    {
+      "name": "bootloader.bin",
+      "address": 0,
+      "sha256": "30d47ab1f344cfa69f6b2f718ffa72fc7baea6db047eaabefea162db29e6821c"
+    },
+    {
+      "name": "partitions.bin",
+      "address": 32768,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    },
+    {
+      "name": "boot_app0.bin",
+      "address": 57344,
+      "sha256": "f94c5d786a7a8fab06ac5d10e33bf37711a6697636dc037559ea19cc410a17f0"
+    },
+    {
+      "name": "firmware.bin",
+      "address": 65536,
+      "sha256": "671576f96ff25d594e8d81c48b0d95bc18f64208e1bccba4c28628b62aa2b66f"
+    }
+  ]
+}

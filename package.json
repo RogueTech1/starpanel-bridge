@@ -1,0 +1,46 @@
+{
+  "name": "starpanel-bridge",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/main.mjs",
+    "demo": "node src/main.mjs --demo",
+    "test": "node --test test/*.test.mjs",
+    "ports": "node src/main.mjs --ports",
+    "desktop": "electron desktop/main.cjs",
+    "desktop:demo": "electron desktop/main.cjs --demo",
+    "dist": "electron-builder --win nsis --x64",
+    "firmware:package": "node scripts/package-firmware.mjs && node scripts/package-avr.mjs"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "1.14.7",
+    "esptool-js": "^0.7.1",
+    "protobufjs": "8.8.1",
+    "serialport": "13.0.0"
+  },
+  "devDependencies": {
+    "electron": "^45.5.0",
+    "electron-builder": "^26.18.0"
+  },
+  "main": "desktop/main.cjs",
+  "description": "Build Star Citizen cockpit panels with ESP32, Arduino and DCSBIOSKit hardware",
+  "author": "Nidavard",
+  "license": "MIT",
+  "homepage": "https://github.com/RogueTech1/starpanel-bridge",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RogueTech1/starpanel-bridge.git"
+  },
+  "overrides": {
+    "@electron/universal": {
+      "minimatch": "11.0.1"
+    },
+    "app-builder-lib": {
+      "minimatch": "11.0.1"
+    }
+  }
+}

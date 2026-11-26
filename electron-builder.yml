@@ -1,0 +1,48 @@
+appId: net.nidavard.starcitizen-hardware-bridge
+productName: StarPanel Bridge
+directories:
+  output: dist
+asar: true
+npmRebuild: false
+files:
+  - desktop/**/*
+  - src/**/*
+  - panel.json
+  - package.json
+extraResources:
+  - from: schema/live/sc_extrait.desc
+    to: schema/telemetry.desc
+  - from: schema/local.desc
+    to: schema/ptu.desc
+  - from: schema/live/field-catalog.json
+    to: schema/field-catalog.json
+  - from: firmware-images
+    to: firmware-images
+  - from: tools/avrdude
+    to: tools/avrdude
+  - from: native/StarPanelKeyboard.exe
+    to: tools/StarPanelKeyboard.exe
+  - from: docs
+    to: docs
+  - from: THIRD-PARTY-NOTICES.md
+    to: THIRD-PARTY-NOTICES.md
+  - from: LICENSE
+    to: LICENSE
+  - from: licenses
+    to: licenses
+  - from: skills
+    to: skills
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: desktop/assets/icon.ico
+  signExecutable: false
+nsis:
+  oneClick: true
+  perMachine: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  runAfterFinish: false
+  deleteAppDataOnUninstall: false
+  artifactName: StarPanel-Bridge-Setup-${version}.${ext}

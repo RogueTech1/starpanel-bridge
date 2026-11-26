@@ -1,0 +1,45 @@
+{
+  "format": "starpanel-1",
+  "panel": {
+    "id": "c3gear01",
+    "name": "Super Mini gear lamp",
+    "board": "esp32c3supermini",
+    "components": [
+      {
+        "id": "gear01",
+        "kind": "led",
+        "label": "Landing gear",
+        "pin": 3,
+        "count": 7,
+        "path": "vehicle.state.flight.state.gear",
+        "match": "VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED",
+        "rules": [
+          {
+            "operator": "equals",
+            "match": "VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED",
+            "effect": "pulse",
+            "color": "#ff0000",
+            "brightness": 64,
+            "periodMs": 2400
+          },
+          {
+            "operator": "contains",
+            "match": "ING",
+            "effect": "blink",
+            "color": "#ffff00",
+            "brightness": 64,
+            "periodMs": 2000
+          },
+          {
+            "operator": "equals",
+            "match": "VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTED",
+            "effect": "solid",
+            "color": "#00ff00",
+            "brightness": 64,
+            "periodMs": 2400
+          }
+        ]
+      }
+    ]
+  }
+}

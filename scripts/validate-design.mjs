@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {validateProfile,compileProfile} from '../src/profiles.mjs';
+import {catalog} from '../src/catalog.mjs';
+import {loadSchema} from '../src/game.mjs';
+const file=process.argv[2];if(!file)throw Error('Usage: node scripts/validate-design.mjs <design.starpanel.json>');
+if(fs.statSync(file).size>32000)throw Error('Design exceeds 32 KB');
+const data=JSON.parse(fs.readFileSync(file));if(data.format!=='starpanel-1')throw Error('Unsupported design format');
+const schema=loadSchema(path.resolve(import.meta.dirname,'../schema/live/sc_extrait.desc'));
+validateProfile(data.panel,new Set(catalog(schema).map(f=>f.path)));compileProfile(data.panel,{buttons:{},fields:{}});
+console.log(`Valid design: ${data.panel.name} · ${data.panel.board} · ${data.panel.components.length} components`);

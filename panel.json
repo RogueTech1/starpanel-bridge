@@ -1,0 +1,13 @@
+{
+  "buttons": {},
+  "fields": {
+    "speed": "vehicle.state.flight.instruments.speed",
+    "altitude": "vehicle.state.flight.instruments.altitude",
+    "radar_altitude": "vehicle.state.flight.instruments.radar_altitude",
+    "vertical_speed": "vehicle.state.flight.instruments.vertical_speed_indicator",
+    "gear": "vehicle.state.flight.state.gear",
+    "lights": "vehicle.state.lights_enabled",
+    "health": "actor.vitals.health.current",
+    "oxygen": "actor.vitals.oxygen.current"
+  }
+}

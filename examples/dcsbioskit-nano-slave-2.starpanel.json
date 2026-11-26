@@ -1,0 +1,30 @@
+{
+  "format": "starpanel-1",
+  "panel": {
+    "id": "nanosl02",
+    "name": "DCSBIOSKit Nano slave 2",
+    "board": "nano",
+    "address": 2,
+    "components": [
+      {
+        "id": "gearbt",
+        "kind": "button",
+        "label": "Gear button",
+        "pin": 8,
+        "action": "key_G"
+      },
+      {
+        "id": "alt001",
+        "kind": "readout",
+        "label": "Altitude",
+        "path": "vehicle.state.flight.instruments.altitude"
+      },
+      {
+        "id": "gear01",
+        "kind": "readout",
+        "label": "Gear",
+        "path": "vehicle.state.flight.state.gear"
+      }
+    ]
+  }
+}

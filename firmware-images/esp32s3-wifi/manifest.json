@@ -1,0 +1,27 @@
+{
+  "profile": "esp32s3-wifi",
+  "chip": "ESP32-S3",
+  "minimumFlashBytes": 8388608,
+  "files": [
+    {
+      "name": "bootloader.bin",
+      "address": 0,
+      "sha256": "1776e4dd896a69d0a5c2e79957b0e2a88aa4129b1381d6478683515a1f6af343"
+    },
+    {
+      "name": "partitions.bin",
+      "address": 32768,
+      "sha256": "1d9cca96de0fe07ad7fc0648b9878ddecd9ce565e38b589ad20fea698ed4c80c"
+    },
+    {
+      "name": "boot_app0.bin",
+      "address": 57344,
+      "sha256": "f94c5d786a7a8fab06ac5d10e33bf37711a6697636dc037559ea19cc410a17f0"
+    },
+    {
+      "name": "firmware.bin",
+      "address": 65536,
+      "sha256": "600ed41b9c8f841feaecdefd8a54bc79665399752397df6d6c2ef4e013aba957"
+    }
+  ]
+}
