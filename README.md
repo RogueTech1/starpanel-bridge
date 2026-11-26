@@ -77,6 +77,8 @@ The maintained samples are synthetic. Private logs, recordings, credentials, per
 
 ## Credits
 
+**ChatGPT Codex (OpenAI)** — AI development contributor, assisting with application and firmware implementation, debugging, testing, documentation and release preparation.
+
 **Inspired by [DCSBIOSKit](https://dcsbioskit.com/) and [DCS-BIOS](https://github.com/DCS-Skunkworks/dcs-bios).** Thanks to their creators/contributors for the modular hardware ecosystem and open cockpit architecture. The Arduino transport uses the pinned [DCSBIOSKit library fork](https://github.com/DCSBIOSKit/dcs-bios-arduino-library).
 
 [BORT](https://github.com/charliefoxtwo/Bort) provides context for data/address discovery; it is not bundled or required. Thanks also to [Sokren's telemetry research](https://github.com/Sokren/sc-telemetry-deck), Espressif, Arduino, Adafruit and U8g2.
