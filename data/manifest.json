@@ -35,6 +35,11 @@
       "path": "data/scenarios/gear-cycle.ndjson",
       "bytes": 645,
       "sha256": "2531509cd38b4192a27a543afca18920c5431498ae58b07d60d54506dea8d9bc"
+    },
+    {
+      "path": "data/research/sc-telemetry-deck-2026-11-26.json",
+      "bytes": 12753,
+      "sha256": "89697f666b13ae92694f3b070c52e3a6fc07e9b7797dd555ce4539e459891d8b"
     }
   ]
 }

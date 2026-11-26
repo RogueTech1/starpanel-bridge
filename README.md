@@ -51,6 +51,8 @@ Powered DCSBIOSKit RS485 is **not Ethernet**. Follow the [vendor instructions](h
 ## Documentation and reproducible source
 
 - [Quick start / Wi-Fi](docs/QUICKSTART.md)
+- [Game telemetry activation and verification](docs/TELEMETRY-SETUP.md)
+- [SC Telemetry Deck I/O research and comparison](docs/SC-TELEMETRY-DECK.md)
 - [Hardware, parts and wiring](docs/HARDWARE.md)
 - [DCSBIOSKit master/slave programming and BORT context](docs/DCSBIOSKIT.md)
 - [Panel recipes and shared designs](docs/BUILD-RECIPES.md)

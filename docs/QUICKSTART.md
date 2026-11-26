@@ -8,6 +8,8 @@ The installer bundles firmware and programming tools. Obtain it from [official p
 
 ## Connect the game
 
+For manual commands, PTU `user.cfg` settings, listener checks and rollback, keep a copy of [Enable and verify game telemetry](TELEMETRY-SETUP.md). The [SC Telemetry Deck research](SC-TELEMETRY-DECK.md) distinguishes existing LIVE data from newer PTU definitions.
+
 Click **Enable telemetry startup setting** in the app. This writes the Windows user environment variable `GRPC_CLIENT_SERVER_ENABLED=true`. It does not inject into or modify the running game. After saving, safely close the game and completely exit RSI Launcher, including its tray process. Reopen the launcher and game. Enter a pilot seat.
 
 The app reconnects automatically to `127.0.0.1:2942`. **Receiving** means fresh frames, rather than a successful TCP probe alone. Character data may arrive before vehicle data. Use **Diagnostics** to inspect the decoded frame and log. Missing data displays as unavailable.

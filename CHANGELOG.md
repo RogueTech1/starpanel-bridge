@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — telemetry research documentation
+
+- Saved version-specific Windows/Wine telemetry activation, PTU action-enable setting, listener/stream verification and rollback instructions with upstream attribution.
+- Compared SC Telemetry Deck's pinned schema/action reference: 50 catalog entries beyond LIVE, matching our saved PTU catalog, and no new action names. Documented read-only/action limitations and privacy-sensitive fields.
+- Added a read-only descriptor/action comparison tool and an attributed metadata snapshot. Production game schema and board firmware remain unchanged.
+
 ## 0.6.0 — privacy cleanup and complete master/slave workflow
 
 - Added vendor-compatible DCSBIOSKit Master Controller routing firmware and a separate role-checked master upload/restore flow. Slave/panel EEPROM writes remain separate.

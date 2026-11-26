@@ -1,5 +1,7 @@
 # Troubleshooting
 
+Use the version-specific [telemetry setup and verification guide](TELEMETRY-SETUP.md). The [pinned upstream research](SC-TELEMETRY-DECK.md) records PTU builds reported to read settings without starting a listener; those builds have no demonstrated configuration workaround.
+
 | Symptom | What to check |
 | --- | --- |
 | Connection refused on 2942 | Save the telemetry setting, fully quit game and RSI Launcher, then reopen both. A running process cannot inherit a newly saved environment variable. Check the game's local service registration in `Game.log`. A firewall rule cannot create a missing service. |

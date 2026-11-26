@@ -1,0 +1,458 @@
+{
+  "format": "starpanel-schema-comparison-1",
+  "counts": {
+    "baseline": 124,
+    "candidate": 174
+  },
+  "fields": {
+    "added": [
+      {
+        "path": "header.sequence",
+        "type": "uint64",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "header.game_time_unix_ms",
+        "type": "int64",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.shields.level",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.shields.faces",
+        "type": "float",
+        "repeated": true,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.health",
+        "type": "float",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.master_mode.mode",
+        "type": ".sc.game.telemetry.v1.VehicleMasterMode",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": {
+          "VEHICLE_MASTER_MODE_UNSPECIFIED": 0,
+          "VEHICLE_MASTER_MODE_NAVIGATION": 1,
+          "VEHICLE_MASTER_MODE_SCM": 2,
+          "VEHICLE_MASTER_MODE_STEALTH": 3
+        }
+      },
+      {
+        "path": "vehicle.state.master_mode.spooled",
+        "type": "bool",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.quantum_travel.state",
+        "type": ".sc.game.telemetry.v1.QuantumTravelState",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": {
+          "QUANTUM_TRAVEL_STATE_UNSPECIFIED": 0,
+          "QUANTUM_TRAVEL_STATE_OFF": 1,
+          "QUANTUM_TRAVEL_STATE_IDLE": 2,
+          "QUANTUM_TRAVEL_STATE_ALIGNING": 3,
+          "QUANTUM_TRAVEL_STATE_TRAVELING": 4,
+          "QUANTUM_TRAVEL_STATE_COOLDOWN": 5
+        }
+      },
+      {
+        "path": "vehicle.state.quantum_travel.spool_ratio",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.quantum_travel.calibration_ratio",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.quantum_travel.destination.id",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.quantum_travel.destination.display_name",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.quantum_travel.eta_seconds",
+        "type": "float",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      },
+      {
+        "path": "vehicle.state.quantum_travel.remaining_distance_m",
+        "type": "double",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      },
+      {
+        "path": "actor.state.operator_mode",
+        "type": ".sc.game.telemetry.v1.ActorOperatorMode",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": {
+          "ACTOR_OPERATOR_MODE_UNSPECIFIED": 0,
+          "ACTOR_OPERATOR_MODE_INACTIVE": 1,
+          "ACTOR_OPERATOR_MODE_FLIGHT": 2,
+          "ACTOR_OPERATOR_MODE_COMBAT": 3,
+          "ACTOR_OPERATOR_MODE_TURRET": 4,
+          "ACTOR_OPERATOR_MODE_MISSILE": 5,
+          "ACTOR_OPERATOR_MODE_SCANNING": 6,
+          "ACTOR_OPERATOR_MODE_MINING": 7,
+          "ACTOR_OPERATOR_MODE_QUANTUM_NAVIGATION": 8,
+          "ACTOR_OPERATOR_MODE_REFUEL": 9,
+          "ACTOR_OPERATOR_MODE_SALVAGE": 11
+        }
+      },
+      {
+        "path": "actor.state.location.hierarchy",
+        "type": ".sc.game.telemetry.v1.LocationName",
+        "repeated": true,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.location.jurisdiction.id",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.location.jurisdiction.display_name",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.location.armistice_zone",
+        "type": "bool",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.revision",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.contract_id",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.title",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.giver_name",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.current_objective.text",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.objectives_completed",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.objectives_total",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.tracked_contract.details.ends_at_unix_ms",
+        "type": "int64",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      },
+      {
+        "path": "actor.state.crime_stat",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "actor.state.player_name",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.state",
+        "type": ".sc.game.telemetry.v1.GameState",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": {
+          "GAME_STATE_UNSPECIFIED": 0,
+          "GAME_STATE_FRONT_END": 1,
+          "GAME_STATE_LOADING": 2,
+          "GAME_STATE_IN_GAME": 3
+        }
+      },
+      {
+        "path": "game.menu_open",
+        "type": "bool",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.game_mode",
+        "type": "string",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.fps",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.frame_time_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.main_thread_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.render_thread_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.gpu_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      },
+      {
+        "path": "game.debug.vram.used_mb",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.vram.budget_mb",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.network.ping_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.network.packet_loss_percent",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.network.bits_per_second_in",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.network.bits_per_second_out",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.server.fps",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.server.min_frame_time_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.server.max_frame_time_ms",
+        "type": "float",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.server.hitch_count",
+        "type": "uint32",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.universe_time_unix_ms",
+        "type": "int64",
+        "repeated": false,
+        "presence": "wire presence only",
+        "enums": null
+      },
+      {
+        "path": "game.debug.shard_id",
+        "type": "string",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      },
+      {
+        "path": "game.debug.shard_name",
+        "type": "string",
+        "repeated": false,
+        "presence": "explicit",
+        "enums": null
+      }
+    ],
+    "removed": [],
+    "changed": [
+      {
+        "before": {
+          "path": "vehicle.state.flight.instruments.quantum_fuel",
+          "type": "float",
+          "repeated": false,
+          "presence": "wire presence only",
+          "enums": null
+        },
+        "after": {
+          "path": "vehicle.state.flight.instruments.quantum_fuel",
+          "type": "float",
+          "repeated": false,
+          "presence": "explicit",
+          "enums": null
+        }
+      },
+      {
+        "before": {
+          "path": "vehicle.state.flight.instruments.altitude",
+          "type": "float",
+          "repeated": false,
+          "presence": "wire presence only",
+          "enums": null
+        },
+        "after": {
+          "path": "vehicle.state.flight.instruments.altitude",
+          "type": "float",
+          "repeated": false,
+          "presence": "explicit",
+          "enums": null
+        }
+      }
+    ]
+  },
+  "methods": {
+    "added": [
+      {
+        "name": "TriggerGameAction",
+        "request": ".sc.game.telemetry.v1.TriggerGameActionRequest",
+        "response": ".sc.game.telemetry.v1.TriggerGameActionResponse",
+        "stream": false
+      },
+      {
+        "name": "ListTriggerableActions",
+        "request": ".sc.game.telemetry.v1.ListTriggerableActionsRequest",
+        "response": ".sc.game.telemetry.v1.ListTriggerableActionsResponse",
+        "stream": false
+      }
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "actions": {
+    "baselineCount": 112,
+    "candidateCount": 112,
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "provenance": {
+    "reviewed": "2026-11-26",
+    "repository": "https://github.com/Sokren/sc-telemetry-deck",
+    "commit": "f6e8fe8a71c2bd07724f5e2fe8b803da9d2a0d66",
+    "candidateDescriptorSha256": "26fc796bf0432b8d7b0320131bbe67cc0ea4333cad84548d3dea1202355467b9",
+    "baselineDescriptorSha256": "d43427ea35bf6876fb2edcc2ba5a5bbd3535d16f4815aeda3c1ab7285cbc2f04",
+    "evidence": "Static descriptor/action-list comparison only; candidate fields are not verified live. No upstream implementation or player capture included."
+  }
+}
