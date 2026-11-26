@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0 — API interaction only
+
+- Removed the Windows keyboard helper, emulation implementation, key-binding UI and native build/package steps. All game inputs now use advertised API actions.
+- Reject legacy key mappings in imported/saved designs and advanced configurations. At startup, disable legacy input mappings in memory while preserving readouts and original files; show a migration notice.
+- Added separate ON/OFF API action fields for maintained switches and converted shipped examples/tests to API actions.
+- LIVE 4.10.3 is explicitly readout-only; there is no fallback input path when the game lacks action RPCs.
+
 ## 0.8.1 — dedicated master controller section
 
 - Made the DCSBIOSKit Master Controller prominent in Board library and separately grouped in the designer dropdown as a setup shortcut, preserving the current panel.

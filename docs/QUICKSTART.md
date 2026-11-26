@@ -60,7 +60,7 @@ For standalone boards, connect their USB ports under **Panels & controls**, choo
 
 ## Controls and tray operation
 
-Match the selected keyboard chord to the corresponding binding in Star Citizen. **Enable controls** is off at each app start. The game must have focus; the helper refuses to type into another foreground application. Maintained switches can act as soon as controls are enabled and their physical positions plus valid feedback arrive, so set them intentionally first.
+**Enable controls** is off at each app start. Inputs call advertised game API actions only. LIVE 4.10.3 is readout-only; an action-capable build must expose its action RPCs and advertise the selected action. Maintained switches act only with fresh feedback and recent physical positions.
 
 Close the window to keep panels running. Click the tray icon to reopen it. Tray menu → **Start with Windows** enables automatic tray startup. Tray menu → **Quit** stops telemetry and releases serial ports. Reinstalling preserves designs; back up `%APPDATA%\StarCitizenHardwareBridge` before manually resetting app data.
 

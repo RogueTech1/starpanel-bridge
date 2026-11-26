@@ -1,4 +1,4 @@
-import {keyCodes} from './keyboard.mjs';
+import {assertApiAction} from './api-only.mjs';
 export const BOARDS = {
   esp32s3: {label: 'ESP32-S3 DevKitC-1', pins: [1,2,3,4,5,6,7,10,11,12,13,14,15,16,17,18,21,38,39,40,41,42,47,48], sda:8,scl:9},
   esp32: {label: 'ESP32 Dev Module', pins: [4,13,14,16,17,18,19,23,25,26,27,32,33], sda:21,scl:22},
@@ -42,11 +42,11 @@ export function validateProfile(p, paths) {
     if (c.kind === 'button' || c.kind === 'switch') {
       if (++buttons > 8 || !BOARDS[p.board].pins.includes(c.pin) || pins.has(c.pin)) throw Error('Choose a unique supported GPIO for each button');
       if (typeof c.action !== 'string' || !/^[a-zA-Z0-9_]{1,80}$/.test(c.action)) throw Error('Choose a game action'); pins.add(c.pin);
-      if(c.action.startsWith('key_'))keyCodes(c.action);
+      assertApiAction(c.action);
       if(c.kind==='switch'){
         if(!paths.has(c.path)||!['string','boolean','number'].includes(typeof c.onValue)||!['string','boolean','number'].includes(typeof c.offValue)||String(c.onValue)===String(c.offValue))throw Error('Choose feedback and two different ON/OFF values');
         if(typeof c.offAction!=='string'||!/^[a-zA-Z0-9_]{1,80}$/.test(c.offAction))throw Error('Choose the OFF action');
-        if(c.offAction.startsWith('key_'))keyCodes(c.offAction);
+        assertApiAction(c.offAction);
       }
     } else if (c.kind === 'readout') {
       if (++readouts > 6 || !paths.has(c.path)) throw Error('Choose a known telemetry field');

@@ -5,7 +5,7 @@ const os = require('node:os');
 const {randomBytes} = require('node:crypto');
 const base = path.resolve(__dirname, '..');
 let win, bridge, schema, Game, loadSchema, Bridge, NetworkPanels, network, catalog, ports, validateProfile, compileProfile, flashFirmware, logs = [];
-let flashing=false, flashState={busy:false,log:[]},WindowsKeyboard,keyboard,BOARDS,KEYS,isAvr,ensureUniqueSlaveAddress,flashAvr,flashMaster,BIOS_FIELDS;
+let flashing=false, flashState={busy:false,log:[]},BOARDS,isAvr,ensureUniqueSlaveAddress,flashAvr,flashMaster,BIOS_FIELDS;
 const smoke = process.argv.includes('--smoke-test');
 const liveCheck = process.argv.includes('--live-check');
 const startHidden = process.argv.includes('--hidden');
@@ -68,7 +68,7 @@ function start(demo) {
   bridge?.stop();
   const config = JSON.parse(fs.readFileSync(configPath));
   if(smoke)config.buttons={gear:'v_deploy_landing_system',lights:'v_lights',flashlight:'pl_toggle_flashlight'};
-  bridge = new Bridge({config, game: demo ? {close() {}} : new Game(schema), keyboard, demo});
+  bridge = new Bridge({config, game: demo ? {close() {}} : new Game(schema), demo});
   bridge.on('log', log);
   bridge.start();
   for (const port of settings.ports) {
@@ -85,14 +85,12 @@ app.whenReady().then(async () => {
   ({Bridge} = await import('../src/bridge.mjs'));
   ({NetworkPanels} = await import('../src/network.mjs'));
   ({validateProfile,compileProfile,BOARDS,isAvr,ensureUniqueSlaveAddress} = await import('../src/profiles.mjs'));
-  ({WindowsKeyboard,KEYS}=await import('../src/keyboard.mjs'));
   ({flashAvr,flashMaster}=await import('../src/avr.mjs'));
   ({BIOS_FIELDS}=await import('../src/dcsbios.mjs'));
-  const helper=app.isPackaged?path.join(process.resourcesPath,'tools/StarPanelKeyboard.exe'):path.join(base,'native/StarPanelKeyboard.exe');
-  if(process.platform==='win32'&&fs.existsSync(helper))keyboard=new WindowsKeyboard(helper);
   ({flashFirmware} = await import('../src/flasher.mjs'));
   ({catalog} = await import('../src/catalog.mjs'));
   const {describeOutput}=await import('../src/io-descriptions.mjs');
+  const {assertApiAction}=await import('../src/api-only.mjs');
   ({SerialPort: ports} = await import('serialport'));
   const local = smoke ? (app.isPackaged ? path.join(process.resourcesPath,'schema/ptu.desc') : path.join(base,'schema/local.desc')) : (app.isPackaged ? path.join(process.resourcesPath, 'schema/telemetry.desc') : path.join(base, 'schema/live/sc_extrait.desc'));
   schema = loadSchema(fs.existsSync(local) ? local : path.join(base, 'vendor/sc-telemetry-deck/schema/sc_extrait.desc'));
@@ -121,7 +119,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('network-token', () => settings.networkToken);
   ipcMain.handle('panels',()=>panels);
   const {hardwareLibrary}=await import('../src/hardware-library.mjs');
-  ipcMain.handle('hardware',()=>({boards:BOARDS,keys:Object.keys(KEYS),library:hardwareLibrary()}));
+  ipcMain.handle('hardware',()=>({boards:BOARDS,library:hardwareLibrary()}));
   ipcMain.handle('hardware-product',async(_event,id)=>{
     const item=hardwareLibrary().find(p=>p.id===id);if(!item?.url)throw Error('No vendor product link for this board');
     await shell.openExternal(item.url);
@@ -241,6 +239,8 @@ app.whenReady().then(async () => {
   ipcMain.handle('save-config', (_event, text) => {
     if (typeof text !== 'string' || text.length > 32000) throw Error('Configuration too large');
     const config = JSON.parse(text);
+    for(const action of Object.values(config.buttons??{}))assertApiAction(action);
+    for(const rule of Object.values(config.switches??{})){assertApiAction(rule.onAction);assertApiAction(rule.offAction);}
     for (const key of ['fields', 'buttons']) {
       if (!config[key] || Array.isArray(config[key]) || typeof config[key] !== 'object') throw Error(`Missing ${key} object`);
       if (Object.keys(config[key]).length > 32) throw Error('Maximum 32 fields/buttons');
@@ -294,12 +294,12 @@ app.whenReady().then(async () => {
           document.getElementById('panelName').value='Tray smoke panel';
           document.getElementById('addButton').click();
           document.getElementById('componentLabel').value='Gear';
-          document.getElementById('componentKey').value='G';
+          document.getElementById('componentAction').value='v_deploy_landing_system';
           document.getElementById('addReadout').click();
           await document.getElementById('savePanel').onclick();
           const designs=await window.bridge.panels();
           const design=designs.filter(p=>p.name==='Tray smoke panel').at(-1);
-          if(!design||design.components.length!==2||design.components[0].action!=='key_G')throw Error('Panel designer save failed');
+          if(!design||design.components.length!==2||design.components[0].action!=='v_deploy_landing_system')throw Error('Panel designer save failed');
           document.getElementById('addLed').click();
           document.getElementById('ledCount').value='7';
           await document.getElementById('savePanel').onclick();
@@ -308,7 +308,7 @@ app.whenReady().then(async () => {
           document.getElementById('addSwitch').click();
           await document.getElementById('savePanel').onclick();
           const maintained=(await window.bridge.panels()).find(p=>p.id===design.id).components.find(c=>c.kind==='switch');
-          if(maintained?.offAction!=='key_G'||!maintained.path)throw Error('Maintained switch designer failed');
+          if(maintained?.offAction!=='v_retract_landing_system'||!maintained.path)throw Error('Maintained switch designer failed');
           document.querySelector('[data-tab="reference"]').click();
           await new Promise(resolve=>setTimeout(resolve,700));
           const filter=(id,value)=>{const e=document.getElementById(id);e.value=value;e.dispatchEvent(new Event(id==='referenceSearch'?'input':'change'));};

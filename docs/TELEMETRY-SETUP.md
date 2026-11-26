@@ -21,7 +21,7 @@ This is StarPanel's own reproducible setup reference, checked against [SC Teleme
 4. Start RSI Launcher and the game. Spawn your character; enter a pilot seat for vehicle data.
 5. Select the game source in StarPanel and check **Live Data** and **Diagnostics**. Fresh character frames establish streaming; fresh vehicle fields establish ship data.
 
-LIVE 4.10.3 exposes the read stream, without the PTU action RPCs. StarPanel's separate keyboard input path still requires **Enable controls**, the correct game bindings and game focus. A console command entered after launch cannot retroactively change the process startup environment.
+LIVE 4.10.3 exposes the read stream, without the PTU action RPCs. StarPanel is API-only, so this build supports outputs without any emulated-input fallback. A console command entered after launch cannot retroactively change the process startup environment.
 
 ## PTU 5.0: preserve these steps for supported builds
 
@@ -69,7 +69,7 @@ Upstream identifies `server.game.telemetry.trigger.debounce.ms`, `server.game.te
 
 ## Wine / Linux reference
 
-StarPanel's installer and keyboard helper target Windows; these are game setup notes, not a Linux support claim. Upstream's Linux issue describes setting the same LIVE environment value in the game's Wine prefix:
+StarPanel's installer targets Windows; these are game setup notes, not a Linux support claim. Upstream's Linux issue describes setting the same LIVE environment value in the game's Wine prefix:
 
 ```sh
 export WINEPREFIX="/path/to/your/star-citizen/prefix"

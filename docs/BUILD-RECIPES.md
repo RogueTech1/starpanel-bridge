@@ -22,7 +22,7 @@ Parts: Arduino Mega 2560, SSD1306 I2C OLED (SDA 20/SCL 21), maintained SPST swit
 
 Import [`standalone-mega-power.starpanel.json`](../examples/standalone-mega-power.starpanel.json). Match its ON/OFF key to your ship-power binding. Save and **Upload saved Arduino design**. After reboot, connect the board under **Standalone Arduino USB · 250000 baud**.
 
-With controls enabled and the game focused, physical OFF requests power OFF if fresh telemetry reports it ON. The app confirms state through `vehicle.state.power.powerplants` rather than repeatedly pressing a toggle. The OLED shows speed, gear and oxygen. This template compiles/validates but is not a claim of bench validation.
+On a compatible action-capable build with controls enabled, physical OFF requests power OFF if fresh telemetry reports it ON. The app confirms state through `vehicle.state.power.powerplants` rather than repeatedly sending a toggle action. The OLED shows speed, gear and oxygen. This template compiles/validates but is not a claim of bench validation.
 
 ## DCSBIOSKit master with two slaves
 

@@ -34,7 +34,6 @@ export function buildReference({activeFields,liveFields,ptuFields,actions,advert
  for(const a of advertisedActions){const item=typeof a==='string'?{action_name:a}:a;actionMap.set(item.action_name,{...actionMap.get(item.action_name),...item});}
  const inputs=[...actionMap.values()].map(a=>({id:`input:${a.action_name}`,kind:'input',key:a.action_name,...describeInput(a.action_name),category:inputCategories[a.category]??a.category??'Other actions',holdable:a.holdable===true,
   snippets:{mapping:json({buttons:{my_button:a.action_name}}),component:json({kind:'button',label:'Button',action:a.action_name})}}));
- for(const [alias,key]of Object.entries(config.buttons??{}))if(key.startsWith('key_'))inputs.push({id:`keyboard:${alias}`,kind:'keyboard',key,alias,...describeInput(key),category:'Keyboard / Configured bindings',snippets:{mapping:json({buttons:{[alias]:key}}),component:json({kind:'button',label:alias.slice(0,16),action:key})}});
  return [...outputs,...inputs].sort((a,b)=>a.key.localeCompare(b.key));
 }
 

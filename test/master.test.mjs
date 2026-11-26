@@ -25,6 +25,6 @@ test('master transport broadcasts fixed telemetry addresses and maps two distinc
  master.port.emit('data',Buffer.from('SC_LEFT_1 1\n'));await new Promise(r=>setImmediate(r));now+=201;master.port.emit('data',Buffer.from('SC_RIGHT_2 1\n'));await new Promise(r=>setImmediate(r));assert.deepEqual(actions,['v_left','v_right']);
 });
 test('slave EEPROM address and unique command name are configured independently of master image',()=>{
- const p={id:'dcsmega1',name:'Slave',board:'mega',address:7,components:[{id:'gear01',kind:'button',label:'Gear',pin:8,action:'key_G'}]};
+ const p={id:'dcsmega1',name:'Slave',board:'mega',address:7,components:[{id:'gear01',kind:'button',label:'Gear',pin:8,action:'v_deploy_landing_system'}]};
  const bytes=eepromProfile(p);assert.equal(bytes[4],7);assert.match(bytes.toString('ascii',9,33),/^SC_DCSMEGA1_GEAR01/);
 });

@@ -6,7 +6,7 @@ import {loadSchema} from '../src/game.mjs';
 import {buildReference,referenceReading} from '../src/reference.mjs';
 const live=catalog(loadSchema('schema/live/sc_extrait.desc')),ptu=catalog(loadSchema('schema/local.desc'));
 const actions=JSON.parse(fs.readFileSync('desktop/assets/input-reference.json')).actions;
-const entries=buildReference({activeFields:live,liveFields:live,ptuFields:ptu,actions,config:{buttons:{gear:'key_G'}}});
+const entries=buildReference({activeFields:live,liveFields:live,ptuFields:ptu,actions,config:{buttons:{gear:'v_deploy_landing_system'}}});
 const field=key=>entries.find(e=>e.key===key);
 const snapshot={actions:[],demo:false,packet:{stale:false},raw:{vehicle:{state:{lights_enabled:false,flight:{instruments:{speed:0}}}}}};
 test('reference separates supported LIVE paths and historical actions from PTU definitions',()=>{

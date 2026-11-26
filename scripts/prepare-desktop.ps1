@@ -9,6 +9,4 @@ try{
  if($LASTEXITCODE -ne 0){throw 'AVR uploader package setup failed'}
  & node scripts/prepare-tools.mjs
  if($LASTEXITCODE -ne 0){throw 'AVR uploader copy failed'}
- & (Join-Path $PSScriptRoot 'build-native.ps1')
- if($LASTEXITCODE -ne 0){throw 'Native helper build failed'}
 }finally{Pop-Location}

@@ -1,4 +1,5 @@
 import {randomUUID} from 'node:crypto';
+import {apiOnlyConfig,isApiAction} from './api-only.mjs';
 
 export function atPath(value, path) {
   for (const part of path.split('.')) {
@@ -11,8 +12,8 @@ export function atPath(value, path) {
 }
 
 export class Panel {
-  constructor({config, game, keyboard, demo = false, allowActions = false, now = Date.now}) {
-    Object.assign(this, {config, game, keyboard, demo, allowActions, now});
+  constructor({config, game, demo = false, allowActions = false, now = Date.now}) {
+    const migrated=apiOnlyConfig(config);Object.assign(this, {config:migrated.config,disabledLegacyInputs:migrated.disabled,game,demo,allowActions,now});
     this.session = randomUUID();
     this.frame = null; this.received = null; this.seq = 0;
     this.actions = new Set(); this.seen = new Set(); this.lastPress = -Infinity; this.busy = false;
@@ -51,15 +52,15 @@ export class Panel {
     return this.perform(action,reply);
   }
   async perform(action,reply){
-    const keyboard = typeof action==='string'&&action.startsWith('key_');
-    if (keyboard ? !this.keyboard&&!this.demo : !this.actions.has(action)) return reply(false, keyboard?'Keyboard input is unavailable':'Action not advertised by current game');
+    if(!isApiAction(action))return reply(false,'API-only: keyboard emulation is not supported');
+    if(!this.actions.has(action))return reply(false,'Action not advertised by current game');
     if (!this.demo && !this.allowActions) return reply(false, 'Read-only mode; start with --allow-actions');
     if (this.busy || this.now() - this.lastPress < 200) return reply(false, 'Rate limited');
     this.lastPress = this.now(); this.busy = true;
     try {
-      const result = keyboard ? (this.demo ? {status:'TRIGGER_GAME_ACTION_STATUS_OK'} : await this.keyboard.press(action)) : await this.game.call('TriggerGameAction', {action_name: action});
+      const result = await this.game.call('TriggerGameAction', {action_name: action});
       const ok = result.status === 'TRIGGER_GAME_ACTION_STATUS_OK';
-      return reply(ok, ok ? (keyboard?'Key chord sent; check telemetry for resulting state':'RPC accepted; check telemetry for resulting state') : 'Game rejected action', result);
+      return reply(ok, ok ? 'RPC accepted; check telemetry for resulting state' : 'Game rejected action', result);
     } catch (err) {
       // A deadline may occur after execution: never retry automatically.
       return reply(false, err.notSent?`Not sent: ${err.message}`:`Outcome unknown: ${err.message}; not retried`);

@@ -66,7 +66,7 @@ ESP32 readouts/LED rules can use supported scalar fields once the active schema 
 
 ## Inputs: controls sent toward the game
 
-Read `ListTriggerableActions` at runtime on a supported PTU build. Use that response as the advertised set; inspect the returned status after a call. The historical snapshot is a reference only. LIVE 4.10.3 has no game action RPCs; the existing keyboard path remains separate.
+Read `ListTriggerableActions` at runtime on a supported PTU build. Use that response as the advertised set; inspect the returned status after a call. The historical snapshot is a reference only. LIVE 4.10.3 has no game action RPCs; StarPanel provides no emulated-input fallback.
 
 Examples from the historical PTU action reference:
 

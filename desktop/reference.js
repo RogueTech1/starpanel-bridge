@@ -5,7 +5,7 @@ let entries=[],snapshot=null,selected=null,listSignature='',lastRefresh=0,config
 const visible=()=>!document.hidden&&!$('reference').classList.contains('hidden');
 const mapped=e=>Object.entries(e.kind==='output'?snapshot.config.fields:snapshot.config.buttons).filter(([,v])=>v===e.key).map(([alias])=>alias);
 const node=(tag,text,className)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;};
-const shortType=e=>e.kind==='output'?`${e.type.split('.').at(-1)}${e.repeated?'[]':''}`:e.kind==='keyboard'?'Keyboard':'Game action';
+const shortType=e=>e.kind==='output'?`${e.type.split('.').at(-1)}${e.repeated?'[]':''}`:'Game action';
 function filtered(){
  const q=$('referenceSearch').value.trim().toLowerCase(),direction=$('referenceDirection').value,scope=$('referenceScope').value,status=$('referenceStatus').value;
  return entries.filter(e=>{
@@ -23,7 +23,7 @@ function filtered(){
 }
 function detail(){
  const target=$('referenceDetail');target.replaceChildren();const e=entries.find(e=>e.id===selected);if(!e){target.append(node('p','No matching entries. Try another filter.'));return;}
- target.append(node('span',e.kind==='output'?'OUTPUT ← GAME':e.kind==='keyboard'?'KEYBOARD → GAME':'INPUT → GAME','eyebrow'),node('h3',e.label),node('p',e.key,'reference-key'),node('p',e.description,'reference-purpose'),node('p',e.category));
+ target.append(node('span',e.kind==='output'?'OUTPUT ← GAME':'INPUT → GAME','eyebrow'),node('h3',e.label),node('p',e.key,'reference-key'),node('p',e.description,'reference-purpose'),node('p',e.category));
  const state=node('div',undefined,'reference-reading');state.id='referenceReading';target.append(state);
  const definitions=node('dl');
  const pair=(label,value)=>definitions.append(node('dt',label),node('dd',value));
@@ -36,7 +36,7 @@ function detail(){
   pair('Hardware',e.bios?`ESP32 + Arduino / DCSBIOSKit · 0x${e.bios.address.toString(16)} · ${e.bios.bytes} bytes ASCII`:'ESP32 scalar readout/rules; no assigned StarPanel Arduino address');
   if(e.repeated)pair('Collection','Repeated data needs custom parsing; direct designer insertion is disabled.');
  }else{
-  pair('Availability',e.kind==='keyboard'?'Requires configured key binding, Enable controls and game focus':'Only currently advertised actions can be used; acceptance still depends on game context');
+  pair('Availability','Only currently advertised actions can be used; acceptance still depends on game context');
   if(e.kind==='input')pair('Hold',e.holdable?'Historical metadata says holdable; current panel programmer uses discrete presses':'Discrete action');
  }
  pair('Mapped aliases',mapped(e).join(', ')||'None');target.append(definitions);
@@ -50,7 +50,7 @@ function detail(){
  const controls=node('div',undefined,'row');
  const button=(label,fn,disabled=false)=>{const b=node('button',label);b.disabled=disabled;b.onclick=async()=>{try{await fn();}catch(err){$('referenceResult').textContent=err.message;}};controls.append(b);};
  button('Copy '+(e.kind==='output'?'field path':'action'),async()=>{$('referenceResult').textContent=await window.bridge.copyReference(e.id,'key');});
- const available=e.kind==='output'?e.activeSchema&&!e.repeated:e.kind==='keyboard'||snapshot.actions.includes(e.key);
+ const available=e.kind==='output'?e.activeSchema&&!e.repeated:snapshot.actions.includes(e.key);
  button('Add to designer',()=>{document.dispatchEvent(new CustomEvent('reference-use',{detail:{kind:e.kind,key:e.key}}));},!available);
  target.append(controls);
  target.append(node('h4','Mapping fragment'),node('p','Merge this fragment into advanced mappings; it is not a full configuration.'));
@@ -63,7 +63,7 @@ function detail(){
 function updateReading(e){
  const target=$('referenceReading');if(!target||!e)return;const reading=referenceReading(e,snapshot),meaning=e.expected?.states.find(s=>s.value===reading.value);target.replaceChildren(node('strong',reading.state+(meaning?' · '+meaning.label:'')));
  if(reading.value!==null)target.append(node('pre',typeof reading.value==='string'?reading.value:JSON.stringify(reading.value,null,2)));
- const use=[...$('referenceDetail').querySelectorAll('button')].find(b=>b.textContent==='Add to designer');if(use)use.disabled=!(e.kind==='output'?e.activeSchema&&!e.repeated:e.kind==='keyboard'||snapshot.actions.includes(e.key));
+ const use=[...$('referenceDetail').querySelectorAll('button')].find(b=>b.textContent==='Add to designer');if(use)use.disabled=!(e.kind==='output'?e.activeSchema&&!e.repeated:snapshot.actions.includes(e.key));
 }
 function draw(){
  if(!snapshot||!entries.length)return;const rows=filtered();

@@ -11,7 +11,7 @@
         "kind": "button",
         "label": "Gear button",
         "pin": 8,
-        "action": "key_G"
+        "action": "v_deploy_landing_system"
       },
       {
         "id": "alt001",

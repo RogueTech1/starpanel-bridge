@@ -5,7 +5,6 @@ import readline from 'node:readline';
 import {SerialPort} from 'serialport';
 import {Game, loadSchema} from './game.mjs';
 import {Bridge} from './bridge.mjs';
-import {WindowsKeyboard} from './keyboard.mjs';
 const base = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const option = name => {const i = args.indexOf(name); if (i < 0) return null; if (!args[i+1] || args[i+1].startsWith('--')) throw Error(`${name} needs a value`); return args[i+1];};
@@ -19,9 +18,7 @@ const config = JSON.parse(fs.readFileSync(option('--config') ?? path.join(base, 
 const local = path.join(base, 'schema/live/sc_extrait.desc');
 const schemaPath = option('--schema') ?? (fs.existsSync(local) ? local : path.join(base, 'vendor/sc-telemetry-deck/schema/sc_extrait.desc'));
 const game = demo ? {close() {}} : new Game(loadSchema(schemaPath));
-const helper=path.join(base,'native/StarPanelKeyboard.exe');
-const keyboard=process.platform==='win32'&&fs.existsSync(helper)?new WindowsKeyboard(helper):undefined;
-const bridge = new Bridge({config, game, keyboard, demo, allowActions: args.includes('--allow-actions')});
+const bridge = new Bridge({config, game, demo, allowActions: args.includes('--allow-actions')});
 let recording;
 if (args.includes('--record')) {
   fs.mkdirSync(path.join(base, 'recordings'), {recursive: true});

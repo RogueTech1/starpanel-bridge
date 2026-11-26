@@ -11,8 +11,8 @@
         "kind": "switch",
         "label": "Ship power",
         "pin": 8,
-        "action": "key_U",
-        "offAction": "key_U",
+        "action": "v_power_set_on",
+        "offAction": "v_power_set_off",
         "path": "vehicle.state.power.powerplants",
         "onValue": true,
         "offValue": false

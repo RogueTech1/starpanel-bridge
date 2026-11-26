@@ -13,7 +13,7 @@ test('shield profiles reuse verified slave images and reserve bus/backlight pins
  for(const [board,base]of [['dcs-nano-shield','nano'],['dcs-mega-shield','mega']]){
   assert.equal(AVR_TARGETS[board].image,AVR_TARGETS[base].image);
   for(const pin of [0,1,2,4,5,13])assert.ok(!BOARDS[board].pins.includes(pin));
-  const profile={id:'1234abcd',board,name:'Shield',address:12,components:[{id:'abc123',kind:'button',label:'Gear',pin:7,action:'key_G'}]};
+  const profile={id:'1234abcd',board,name:'Shield',address:12,components:[{id:'abc123',kind:'button',label:'Gear',pin:7,action:'v_deploy_landing_system'}]};
   validateProfile(profile,new Set());assert.equal(eepromProfile(profile)[4],12);
   assert.throws(()=>validateProfile({...profile,address:127},new Set()),/address/);
   assert.throws(()=>validateProfile({...profile,components:[{...profile.components[0],pin:2}]},new Set()),/GPIO/);

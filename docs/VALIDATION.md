@@ -10,7 +10,7 @@ Software tests, compiler success, firmware readback, protocol acknowledgments an
 | Standalone/slave AVR | Compiler, EEPROM layout, address map and host transport tests; exact boards need bench checks |
 | DCSBIOSKit master | Vendor-compatible ATmega2560 three-bus sketch compiles; dedicated uploader checks image role/MCU and avoids slave EEPROM writes; physical master/slave validation remains necessary |
 | Slave return path | Software tests cover distinct slave aliases reaching host actions and address configuration; real RS485 polling/electrical timing is not emulated by these tests |
-| Game inputs | Freshness, focus, duplication, mismatch and rate guards tested in software; actual key acceptance depends on game bindings and Windows/game handling |
+| Game inputs | API-only enforcement, freshness, duplication, mismatch and rate guards tested in software; actual RPC acceptance depends on game build and context |
 | Synthetic fixtures | Exercise protocol semantics; no real-world compatibility claim follows from replay alone |
 | Privacy | Git/history, public-tree and unpacked release scans are described in the privacy audit; legal third-party attribution is retained |
 

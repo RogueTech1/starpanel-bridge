@@ -1,5 +1,5 @@
 export function referenceReading(entry,snapshot){
- if(entry.kind!=='output')return {state:entry.kind==='keyboard'?'Keyboard binding':snapshot.actions.includes(entry.key)?(snapshot.demo?'Simulator action':'Advertised by game'):'Reference only',value:null};
+ if(entry.kind!=='output')return {state:snapshot.actions.includes(entry.key)?(snapshot.demo?'Simulator action':'Advertised by game'):'Reference only',value:null};
  if(!entry.activeSchema)return {state:'PTU reference only',value:null};
  if(snapshot.packet.stale)return {state:'Stale / disconnected',value:null};
  let value=snapshot.raw;

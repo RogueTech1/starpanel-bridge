@@ -10,13 +10,13 @@ Open **I/O Reference** in StarPanel Bridge. It combines the former Field catalog
 - **Category** groups character, flight, power, quantum, weapons and other systems.
 - **Show** narrows to received/advertised entries or entries mapped in the current host configuration.
 
-Select a result for its type, presence semantics, enum names/numbers, mapped aliases, current reading and hardware support. Inputs show current advertisement separately from historical reference metadata. Configured keyboard bindings also appear, separately labeled.
+Select a result for its type, presence semantics, enum names/numbers, mapped aliases, current reading and hardware support. Inputs show current advertisement separately from historical reference metadata. Keyboard mappings are not supported.
 
 Every bundled input and output has a plain-English label and purpose description. Inputs explain the requested action; outputs explain what the reported value represents. Search also matches this text. Units appear where established; unknown scales and build-dependent meanings are called out instead of guessed. Newly advertised actions outside the saved reference receive an explicit unreviewed-description label. Designer field choices and advertised-action suggestions also include friendly names while retaining the exact identifiers.
 
 **Expected states / values** explains each output's contract: friendly enum meanings with exact constant names/numeric codes, true/false meanings, collection handling, integer/text representation and known numeric guidance. Gear distinguishes retracted, deploying, deployed and retracting. Unknown ranges remain explicitly unverified; missing/stale data is separate from OFF/zero. Numeric display guidance does not clamp values or guarantee a particular ship emits the field.
 
-The browser includes 174 output definitions and 112 historical API action references, plus configured keyboard bindings. Fifty outputs are PTU additions beyond the LIVE catalog. A PTU definition is not evidence of a working listener, a received value or an executable input. See [activation steps](TELEMETRY-SETUP.md) and [research evidence](SC-TELEMETRY-DECK.md).
+The browser includes 174 output definitions and 112 historical API action references. Fifty outputs are PTU additions beyond the LIVE catalog. A PTU definition is not evidence of a working listener, a received value or an executable input. See [activation steps](TELEMETRY-SETUP.md) and [research evidence](SC-TELEMETRY-DECK.md).
 
 ## Use a result in a panel
 

@@ -19,7 +19,7 @@ Use the version-specific [telemetry setup and verification guide](TELEMETRY-SETU
 | Wrong RGB color | Firmware uses GRB-order WS2812 RGB. Other channel orders and RGBW modules require a driver change. Check signal/power integrity. |
 | LED off | Check fresh telemetry, the selected field, rule match and wiring. No match or stale data intentionally turns the chain off. Keep brightness/power within the actual module's requirements. |
 | Gear lamp red vs green | Inspect current raw gear state. Red means deployed; green means retracted; yellow is moving. Hardware acceptance tests briefly use explicitly simulated states, then restore real game data. |
-| Keyboard control rejected | Enable controls, focus Star Citizen, match the game's actual key binding and avoid elevation mismatches. Windows may reject synthetic input; the app does not bypass those restrictions. |
+| No API inputs / legacy mapping disabled | LIVE 4.10.3 has no action RPCs. Keyboard mappings are disabled and rejected; choose advertised API actions on a compatible build. Readouts still work. |
 | Maintained switch does nothing | Inspect its status: missing feedback, moving gear, stale physical report, conflicting switches or disabled controls block synchronization. Uncertain results are not repeatedly toggled. |
 
 ## Wi-Fi setup page will not open

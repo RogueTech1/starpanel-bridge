@@ -163,7 +163,6 @@ const inputRows={
 };
 const inputFamilies=[['v_lights','Exterior lights'],['v_light_amplification','Night vision'],['v_flight_advanced_hud','Advanced flight HUD'],['v_ifcs_gsafe','G-force safety'],['v_ifcs_proximity_assist','Proximity assist'],['v_ifcs_vector_decoupling','Decoupled flight'],['v_vtol','VTOL']];
 export function describeInput(key){
- if(key.startsWith('key_'))return entry(`Keyboard: ${key.slice(4).replaceAll('_',' + ')}`,`Sends the configured ${key.slice(4).replaceAll('_',' + ')} keyboard binding to the focused game. Its in-game effect depends on your actual binding.`);
  if(inputRows[key])return entry(...inputRows[key]);
  if(key.startsWith('emote_')){const name=key.slice(6)==='atease'?'At ease':words(key.slice(6));return entry(`Emote: ${name}`,`Requests the character's ${name.toLowerCase()} emote in an allowed context.`);}
  let m=key.match(/^v_enter_remote_turret_([123])$/);if(m)return entry(`Enter remote turret ${m[1]}`,`Requests control of remote turret slot ${m[1]} when the current seat/vehicle supports it.`);

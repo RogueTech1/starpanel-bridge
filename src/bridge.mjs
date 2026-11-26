@@ -3,15 +3,16 @@ import {randomUUID} from 'node:crypto';
 import {SerialPort} from 'serialport';
 import {Panel, Lines} from './panel.mjs';
 import {DcsBiosPanel} from './dcsbios.mjs';
+import {isApiAction} from './api-only.mjs';
 
 export class Bridge extends EventEmitter {
-  constructor({config, game, keyboard, demo = false, allowActions = false, Serial = SerialPort}) {
+  constructor({config, game, demo = false, allowActions = false, Serial = SerialPort}) {
     super();
-    this.panel = new Panel({config, game, keyboard, demo, allowActions});
+    this.panel = new Panel({config, game, demo, allowActions});
     this.game = game; this.demo = demo; this.Serial = Serial; this.devices = new Map(); this.running = false;
     this.demoGear = false; this.demoLights = false;
     if (demo) this.game.call = async (method, req) => {
-      if (method === 'ListTriggerableActions') return {actions: Object.values(this.panel.config.buttons).map(action_name => ({action_name}))};
+      if (method === 'ListTriggerableActions') return {actions: [...new Set([...Object.values(this.panel.config.buttons),...Object.values(this.panel.config.switches??{}).flatMap(r=>[r.onAction,r.offAction])])].filter(isApiAction).map(action_name=>({action_name}))};
       if (req.action_name === config.buttons.gear) this.demoGear = !this.demoGear;
       if (req.action_name === config.buttons.lights) this.demoLights = !this.demoLights;
       return {status: 'TRIGGER_GAME_ACTION_STATUS_OK'};
@@ -22,7 +23,7 @@ export class Bridge extends EventEmitter {
     if(this.game.supports&&!this.game.supports('ListTriggerableActions')){this.actionDetails=[];this.panel.actions.clear();return;}
     try {
       const actions = await this.game.call('ListTriggerableActions');
-      if (this.running) {this.actionDetails=actions.actions??[];this.panel.actions = new Set(this.actionDetails.map(a => a.action_name));}
+      if (this.running) {this.actionDetails=(actions.actions??[]).filter(a=>isApiAction(a.action_name));this.panel.actions = new Set(this.actionDetails.map(a => a.action_name));}
     } catch (err) { this.actionDetails=[];this.panel.actions.clear(); this.log(`Actions unavailable: ${err.message}`); }
   }
   receive(frame) { this.panel.update(frame); this.emit('raw', frame); }
@@ -64,7 +65,7 @@ export class Bridge extends EventEmitter {
     }, 200);
   }
   status() {
-    return {demo: this.demo, inputsSupported:!!this.panel.keyboard||this.demo||!this.game.supports||this.game.supports('TriggerGameAction'), rpcInputsSupported:this.demo||!this.game.supports||this.game.supports('TriggerGameAction'), keyboardSupported:!!this.panel.keyboard, allowActions: this.panel.allowActions, actions: [...this.panel.actions], actionDetails:this.actionDetails??[], config: this.panel.config,
+    return {demo: this.demo, inputsSupported:this.demo||!this.game.supports||this.game.supports('TriggerGameAction'), rpcInputsSupported:this.demo||!this.game.supports||this.game.supports('TriggerGameAction'), disabledLegacyInputs:this.panel.disabledLegacyInputs, allowActions: this.panel.allowActions, actions: [...this.panel.actions], actionDetails:this.actionDetails??[], config: this.panel.config,
       switchStatus:this.panel.switchStatus,
       devices: [...this.devices.values()].map(d => ({port: d.path, open: d.port?.isOpen ?? false, fields: d.fields, name: d.name, role:d.role,info:d.info,protocol: d.protocol ?? 'json'})),
       packet: this.panel.packet()};

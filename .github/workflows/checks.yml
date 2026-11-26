@@ -18,6 +18,4 @@ jobs:
       - run: node scripts/audit-public.mjs --history
       - run: npm audit
       - shell: powershell
-        run: ./scripts/build-native.ps1
-      - shell: powershell
         run: ./scripts/scan-secrets.ps1

@@ -14,8 +14,7 @@ flowchart LR
   B <--> AVR[Standalone Arduino USB 250000]
   B <--> MASTER[DCSBIOSKit USB master 250000]
   MASTER <--> SLAVE[RS485 slaves]
-  B --> KEY[Foreground-guarded Windows keyboard helper]
-  KEY --> SC
+  B -->|Advertised action RPCs only| SC
 ```
 
 `src/game.mjs` loads a protobuf descriptor and reads the local game stream. `src/panel.mjs` extracts mapped fields, rejects stale data and validates commands. `src/bridge.mjs` manages serial devices. `src/network.mjs` authenticates TCP panels. `src/profiles.mjs` validates/compiles designer profiles. `src/dcsbios.mjs` encodes the private Arduino map. `src/avr.mjs` produces EEPROM settings and runs the bundled uploader. The Electron renderer has no Node access; limited IPC lives in `desktop/preload.cjs`.
@@ -89,18 +88,18 @@ Report initial positions after fresh telemetry arrives, on every stable edge, an
 ```json
 {
   "fields":{"power":"vehicle.state.power.powerplants"},
-  "buttons":{"power_switch":"key_U"},
+  "buttons":{"power_switch":"v_power_set_on"},
   "switches":{
     "power_switch":{
       "path":"vehicle.state.power.powerplants",
       "onValue":true,"offValue":false,
-      "onAction":"key_U","offAction":"key_U"
+      "onAction":"v_power_set_on","offAction":"v_power_set_off"
     }
   }
 }
 ```
 
-`key_U` is only an example; match your game binding. Supported keyboard actions are `key_` followed by zero or more `CTRL_`, `ALT_`, `SHIFT_` modifiers and a supported uppercase key name. See [`src/keyboard.mjs`](../src/keyboard.mjs). Raw helper arguments, shell commands and arbitrary JavaScript are not mapping types. For distinct API ON/OFF actions supply two advertised action names. The [designer guide](DESIGNER.md#maintained-switches) describes stabilization and uncertainty behavior.
+Inputs are API action names only. Use separate advertised ON/OFF names when available; there is no keyboard emulation or arbitrary-code mapping. The designer guide describes stabilization and uncertainty handling.
 
 ## Programming ESP32 profiles
 

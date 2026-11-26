@@ -8,7 +8,7 @@ Build physical Star Citizen cockpit panels with an installed Windows tray app, c
 
 - Select a board, add buttons/maintained switches/readouts or an LED rule, and program it from the app.
 - Receive live instruments over USB, paired Wi-Fi TCP or a DCSBIOSKit RS485 master.
-- Map keyboard bindings and telemetry-backed switches so the game can follow physical positions.
+- Map advertised API actions and telemetry-backed switches so the game can follow physical positions on action-capable builds.
 - Configure up to four ordered conditions for a WS2812 chain: color, pulse, strobe, solid light and stale-data shutdown.
 - Inspect current fields in **Live Data** and look up inputs, outputs, enums, code examples and RS485 addresses in the integrated **I/O Reference**. Add supported entries directly to your panel design.
 - Share credential-free designs and use the included AI skill for custom boards/firmware.
@@ -46,9 +46,11 @@ Powered DCSBIOSKit RS485 is **not Ethernet**. Follow the [vendor instructions](h
 2. Click **Enable telemetry startup setting**. Safely close the game and fully exit RSI Launcher once, then reopen both to inherit the setting. Enter a pilot seat for ship data.
 3. Design the panel and select the exact COM port. Confirm replacement and upload the matching firmware. ESP32 mapping changes use **Send interface to board**; AVR uploads include their design.
 4. For Wi-Fi, provision through USB or the first-start setup AP: `StarPanel-...`, password `StarPanel123`, **http://192.168.4.1/**. Supply your own private LAN credentials, PC address and pairing key locally.
-5. Verify outputs before enabling controls. Keyboard mappings require the game's actual bindings and foreground focus. Maintained switches require fresh feedback and recent physical positions.
+5. Verify outputs before enabling controls. Inputs use the game API only; LIVE 4.10.3 remains readout-only. Maintained switches require fresh feedback and recent physical positions.
 
 ## Documentation and reproducible source
+
+**[API-only interaction and migration](docs/API-ONLY.md):** game inputs use advertised RPC actions only. LIVE 4.10.3 supports readouts without input emulation.
 
 - [Quick start / Wi-Fi](docs/QUICKSTART.md)
 - [Integrated I/O Reference](docs/IO-REFERENCE.md)

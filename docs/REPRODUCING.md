@@ -11,7 +11,6 @@ Pin a commit/tag when sharing results. A source rebuild can reproduce behavior a
 
 ## 1. Obtain the tools and checkout
 
-Use Windows 10/11 x64, Git, Node.js 22+ with npm, and uv. Their upstream installation instructions are linked from [development requirements](DEVELOPMENT.md#requirements). The native helper uses the .NET Framework C# compiler supplied with supported Windows installations. First-time dependency/tool downloads require internet access.
 
 ```powershell
 git clone https://github.com/RogueTech1/starpanel-bridge.git
@@ -30,7 +29,6 @@ npm run prepare:desktop
 npm run dist
 ```
 
-Preparation verifies the checked-in firmware images, installs the pinned PlatformIO AVR uploader package if needed, copies its Windows tools into the ignored `tools/` directory, and compiles/self-tests the native keyboard helper. It does **not** compile firmware or flash connected boards. This closes a common fresh-checkout gap: `npm ci` alone does not create the ignored native helper and AVR upload tools required by the installer.
 
 Output: `dist/StarPanel-Bridge-Setup-<package-version>.exe`, plus `dist/win-unpacked/`. This local build is unsigned unless the release configuration is deliberately changed to provide signing. Do not overwrite published assets with a different local build under the same release/version.
 

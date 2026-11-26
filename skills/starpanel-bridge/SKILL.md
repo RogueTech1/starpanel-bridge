@@ -24,7 +24,7 @@ For master routing, slave polling/addressing and programming roles, read `docs/D
 
 Identify the exact board/chip/flash size, connection (USB/Wi-Fi/RS485), display or LED model and wiring. Prefer the built-in designer and exported `.starpanel.json` format for supported components. For a requested custom design, produce a concrete mapping and pin table, validate it using `node scripts/validate-design.mjs <file>`, and explain how to import/program it. Ask for genuinely missing wiring or credentials without requesting secrets in public logs or committed files.
 
-Reuse the project's actual catalog paths and enums. Never invent a game action, unit or field from a label. Preserve absent/null versus explicit zero/false, and distinguish real telemetry from simulator data. The LIVE schema and an older action-capable test schema are separate; no cached historical action list grants live API support. Keyboard mappings must match the user's actual game bindings and only execute when enabled and Star Citizen has focus.
+Reuse the project's actual catalog paths and enums. Never invent a game action, unit or field from a label. Preserve absent/null versus explicit zero/false, and distinguish real telemetry from simulator data. The LIVE schema and an older action-capable test schema are separate; no cached historical action list grants live API support. Only game API actions are supported; reject all key_ mappings. LIVE 4.10.3 is readout-only. Never add a keyboard-emulation fallback.
 
 ## Operational constraints that matter
 

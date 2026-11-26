@@ -1,10 +1,9 @@
 # Build and release
 
-For the shortest tested path from a new clone, use [Recreate and verify](REPRODUCING.md). `npm run prepare:desktop` prepares the ignored upload tools and native helper using the committed firmware images; full firmware compilation below is needed when modifying or independently rebuilding them.
 
 ## Requirements
 
-- Windows 10/11 x64 for the desktop installer, bundled AVR uploader and keyboard helper.
+- Windows 10/11 x64 for the desktop installer and bundled AVR uploader.
 - [Node.js](https://nodejs.org/) 22+ and npm.
 - [uv](https://docs.astral.sh/uv/) or Python with [PlatformIO](https://docs.platformio.org/en/latest/core/installation/index.html) for firmware builds.
 - Git and, for publishing, an authenticated [GitHub CLI](https://cli.github.com/).
@@ -14,7 +13,6 @@ git clone https://github.com/RogueTech1/starpanel-bridge.git
 cd starpanel-bridge
 npm ci
 npm test
-powershell -NoProfile -File scripts/build-native.ps1
 ```
 
 Start the UI using `Start-Bridge.ps1` or `npm run desktop`. `Start-Bridge.ps1 -Demo` opens the simulator. If a terminal inherited `ELECTRON_RUN_AS_NODE`, clear it before launching Electron. User data is intentionally retained at `%APPDATA%\StarCitizenHardwareBridge` for upgrades from the original app.

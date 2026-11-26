@@ -41,7 +41,8 @@ async function refresh() {
     $('networkEnable').checked = s.network.enabled;
     $('networkStatus').textContent = `${s.network.listening ? 'Listening' : 'Disabled or unavailable'} · TCP ${s.network.port}\nPC addresses: ${s.network.addresses.join(', ') || 'No LAN address detected'}`;
     $('networkClients').textContent = s.network.clients.map(c => `${c.name} · ${c.address} · ${c.fields.join(', ')}`).join('\n');
-    $('status').textContent = `${s.demo ? 'SIMULATOR — generated values; no game commands' : 'LIVE GAME'} · ${p.stale ? 'No fresh telemetry' : `Receiving · age ${p.age_ms} ms`} · ${s.keyboardSupported?'Keyboard controls available · ':''}${s.actions.length} advertised API actions\n${p.error ?? 'USB and IP panels receive selected values at 5 Hz.'}`;
+    $('status').textContent = `${s.demo ? 'SIMULATOR — generated values; no game commands' : 'LIVE GAME'} · ${p.stale ? 'No fresh telemetry' : `Receiving · age ${p.age_ms} ms`} · API-only · ${s.rpcInputsSupported?`${s.actions.length} advertised API actions`:'Readouts only; this schema has no action RPCs'}\n${p.error ?? 'USB and IP panels receive selected values at 5 Hz.'}`;
+    if(s.disabledLegacyInputs?.length)$('status').textContent+=`\nAPI-only: ${s.disabledLegacyInputs.length} legacy input mappings disabled. Replace them with advertised API actions; readouts are preserved.`;
     $('arm').disabled=!s.inputsSupported;
     $('status').classList.toggle('good', !p.stale); $('arm').checked = s.allowActions;
     $('values').replaceChildren();
@@ -70,7 +71,7 @@ async function refresh() {
       $('controls').dataset.signature = signature; $('controls').replaceChildren();
       for (const [name, action] of Object.entries(s.config.buttons)) {
         const b = document.createElement('button'); b.textContent = name; b.title = action;
-        b.disabled = !!s.config.switches?.[name] || p.stale || !(s.actions.includes(action)||(action.startsWith('key_')&&(s.keyboardSupported||s.demo))) || (!s.demo && !s.allowActions);
+        b.disabled = !!s.config.switches?.[name] || p.stale || !s.actions.includes(action) || (!s.demo && !s.allowActions);
         b.onclick = handle(async () => {$('result').textContent = JSON.stringify(await window.bridge.press(name), null, 2);});
         $('controls').append(b);
       }

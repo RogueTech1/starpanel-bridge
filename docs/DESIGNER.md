@@ -10,23 +10,21 @@ Readouts appear in component order, up to six OLED lines. Select a scalar field 
 
 ## Buttons
 
-Add **Button**, choose a free GPIO, then choose **Keyboard binding** or **Advertised game API action**. Keyboard mode offers a key and Ctrl/Alt/Shift modifiers. Match these to your actual game bindings; the app does not assume your controls are the defaults. The board sends a discrete press on the active-low edge, with 35 ms debounce. It does not hold keys, repeat them, implement analog axes or synthesize arbitrary scripts.
+Add **Button**, choose a free GPIO, then enter an advertised game API action. The board sends a discrete command on the active-low edge, with 35 ms debounce. The host calls `TriggerGameAction`; it never emulates OS key presses. **Enable controls** gates live API calls and resets at app start. Confirm the resulting state through telemetry.
 
-The Windows helper checks the foreground process is `StarCitizen`, sends a 60 ms scan-code chord, then releases its keys. **Enable controls** gates live inputs and resets at app start. Simulator controls never call this helper. An acknowledged chord is not proof the game accepted the binding: confirm the effect in telemetry or visually. The app neither injects into game memory nor bypasses input restrictions.
-
-API mode is available for schemas with an action service. Only the currently advertised allowlist may execute. A historical action reference remains in I/O Reference for discovery, clearly labeled; it is not an executable allowlist. Maintained switches using API mode currently use the same selected action for ON and OFF; distinct ON/OFF keyboard keys are available in the designer, and advanced profiles may supply distinct API actions.
+API mode is available for schemas with an action service. Only the currently advertised allowlist may execute. A historical action reference remains in I/O Reference for discovery, clearly labeled; it is not an executable allowlist. The designer provides separate ON and OFF API actions. There is no keyboard emulation path. LIVE 4.10.3 supports readouts only.
 
 ## Maintained switches
 
 Use **Add maintained switch** for physical ON/OFF switches. Closed to GND means ON. Configure:
 
-1. A keyboard chord for the ON direction and an OFF key (same modifiers). Use the same key in both directions if the game's binding toggles.
+1. An advertised API action for ON and another for OFF. Use the same action only for a confirmed toggle with reliable feedback.
 2. A boolean or enumeration **Feedback field**.
 3. The exact game values corresponding to ON and OFF.
 
-Example power switch: feedback `vehicle.state.power.powerplants`, ON `true`, OFF `false`; match both keys to your ship's power-toggle binding. If the physical switch is OFF and the observed ship power is ON, the bridge requests OFF. Game state must be observable; an unpopulated field cannot synchronize safely.
+Example power switch: feedback `vehicle.state.power.powerplants`, ON `true`, OFF `false`; use `v_power_set_on` and `v_power_set_off` only when advertised and accepted by the current build. If the physical switch is OFF and the observed ship power is ON, the bridge requests OFF. Game state must be observable; an unpopulated field cannot synchronize safely.
 
-Example gear switch: feedback `vehicle.state.flight.state.gear`, ON `VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED`, OFF `VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTED`, with the game's gear binding for both directions. The bridge waits through `DEPLOYING` and `RETRACTING` before deciding whether another change is needed.
+Example gear switch: feedback `vehicle.state.flight.state.gear`, ON `VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED`, OFF `VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTED`, with advertised `v_deploy_landing_system` and `v_retract_landing_system` actions. The bridge waits through `DEPLOYING` and `RETRACTING` before deciding whether another change is needed.
 
 The control algorithm:
 
@@ -37,7 +35,7 @@ The control algorithm:
 - Rejects simultaneous physical switches that disagree about the same feedback field.
 - Sends at most one command per observed mismatch, with a one-second synchronization cooldown. Then waits for the desired state; it does not continuously resend a toggle.
 
-If the game rejects a key, focus is wrong, or the outcome is unknown, inspect **Maintained switches** and **Diagnostics**. Correct the binding/focus and move the switch through a deliberate new position to start a new attempt. Repeated commands after an uncertain result are intentionally suppressed. Switching input authority while the game is busy can cause an immediate request once feedback becomes valid, so review physical positions before enabling controls.
+If the game rejects an API action or the outcome is unknown, inspect **Maintained switches** and **Diagnostics**. Check action availability and game context and move the switch through a deliberate new position to start a new attempt. Repeated commands after an uncertain result are intentionally suppressed. Switching input authority while the game is busy can cause an immediate request once feedback becomes valid, so review physical positions before enabling controls.
 
 ## LED rules
 
