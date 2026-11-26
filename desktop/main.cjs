@@ -337,6 +337,7 @@ app.whenReady().then(async () => {
           document.querySelector('[data-tab="library"]').click();
           document.getElementById('libraryVendor').value='DCSBIOSKit';document.getElementById('libraryVendor').dispatchEvent(new Event('change'));
           if(document.querySelectorAll('#libraryCards article').length!==16)throw Error('Incomplete vendor hardware library');
+          if(document.querySelector('#libraryCards article').dataset.product!=='master')throw Error('Master card is not prominent');
           const devkit=document.querySelector('[data-product="devkit"]');
           if(devkit.querySelectorAll('li').length!==3||[...devkit.querySelectorAll('button')].some(b=>b.textContent==='Use in new panel'))throw Error('DevKit role protection failed');
           [...document.querySelectorAll('[data-product="nano-shield"] button')].find(b=>b.textContent==='Use in new panel').click();
@@ -345,6 +346,9 @@ app.whenReady().then(async () => {
           const pins=[...document.getElementById('componentPin').options].map(o=>Number(o.value));
           if([2,5,6,13].some(pin=>pins.includes(pin)))throw Error('Reserved shield pins offered');
           document.getElementById('savedPanels').value=design.id;document.getElementById('savedPanels').dispatchEvent(new Event('change'));
+          const previousBoard=document.getElementById('panelBoard').value;
+          document.getElementById('panelBoard').value='@master';document.getElementById('panelBoard').dispatchEvent(new Event('change'));
+          if(document.getElementById('master').classList.contains('hidden')||document.getElementById('panelBoard').value!==previousBoard||!document.getElementById('master').textContent.includes('D3 TX enable'))throw Error('Separate master role navigation failed');
           return {before: before.packet, after: after.packet, ack, fieldCount: fields.length, portCount: ports.length,
             cards: document.querySelectorAll('.value').length, status: document.getElementById('status').textContent,designerSaved:true,inputRows,outputRows,liveRows};
         })()`);
@@ -366,6 +370,9 @@ app.whenReady().then(async () => {
         await win.webContents.executeJavaScript(`document.querySelector('[data-tab="library"]').click();document.getElementById('library').scrollIntoView({block:'start'});`);
         await new Promise(resolve=>setTimeout(resolve,250));
         fs.writeFileSync(path.join(out,'desktop-library.png'),(await win.webContents.capturePage()).toPNG());
+        await win.webContents.executeJavaScript(`document.dispatchEvent(new Event('open-master'));`);
+        await new Promise(resolve=>setTimeout(resolve,250));
+        fs.writeFileSync(path.join(out,'desktop-master.png'),(await win.webContents.capturePage()).toPNG());
         if (errors.length) throw Error(errors.join('\n'));
         console.log('DESKTOP_SMOKE_OK'); app.exit(0);
       } catch (err) {fs.writeFileSync(path.join(out, 'desktop-error.txt'), err.stack); console.error(err); app.exit(1);}

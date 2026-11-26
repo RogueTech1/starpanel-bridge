@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1 — dedicated master controller section
+
+- Made the DCSBIOSKit Master Controller prominent in Board library and separately grouped in the designer dropdown as a setup shortcut, preserving the current panel.
+- Added a dedicated Master controller tab with its own port connection, restore controls, devices/log and fixed UART1/2/3 TX-enable D2/D3/D4 mapping.
+- Kept master firmware/port protection separate from standard Mega and slave panel GPIO/EEPROM profiles.
+
 ## 0.8.0 — full vendor board library
 
 - Added a searchable Board library covering all 16 reviewed DCSBIOSKit store products and existing standalone profiles, with product links and distinct master/slave/passive/custom roles.

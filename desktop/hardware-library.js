@@ -3,7 +3,7 @@
  const node=(tag,text)=>{const e=document.createElement(tag);e.textContent=text;return e;};
  function draw(){
   const q=$('librarySearch').value.toLowerCase(),role=$('libraryRole').value,vendor=$('libraryVendor').value;
-  const items=library.filter(p=>(!role||p.role===role)&&(!vendor||p.vendor===vendor)&&`${p.name} ${p.role} ${p.description} ${p.notes}`.toLowerCase().includes(q));
+  const items=library.filter(p=>(!role||p.role===role)&&(!vendor||p.vendor===vendor)&&`${p.name} ${p.role} ${p.description} ${p.notes}`.toLowerCase().includes(q)).sort((a,b)=>Number(b.workflow==='master')-Number(a.workflow==='master'));
   $('libraryCount').textContent=`${items.length} items · DCSBIOSKit catalog reviewed 26 Nov 2026. Listing a product does not mean all of its hardware features have a bundled driver.`;
   $('libraryCards').replaceChildren();
   for(const p of items){const card=node('article','');card.dataset.product=p.id;const role=node('span',`${p.vendor} / ${p.role}`);role.className='eyebrow';card.append(role,node('h3',p.name),node('p',p.description),node('p',p.notes));
@@ -11,7 +11,7 @@
    if(p.includes)card.append(node('p','Contains: '+p.includes.map(id=>library.find(p=>p.id===id)?.name??id).join(', ')));
    const row=node('div','');row.className='row';
    if(p.profile){const select=node('button','Use in new panel');select.onclick=()=>{ $('libraryResult').textContent='';document.dispatchEvent(new CustomEvent('hardware-use',{detail:p.profile}));};row.append(select);}
-   if(p.workflow==='master'){const button=node('button','Open master connection');button.onclick=()=>{document.querySelector('[data-tab="panels"]').click();$('protocol').value='dcsbios-master';$('result').textContent='Select and connect the master USB port. Factory routing firmware normally suffices.';};row.append(button);}
+   if(p.workflow==='master'){const button=node('button','Open master setup / I/O');button.onclick=()=>document.dispatchEvent(new Event('open-master'));row.append(button);}
    if(p.url){const link=node('button','Vendor product page');link.onclick=async()=>{try{await window.bridge.hardwareProduct(p.id);}catch(err){$('libraryResult').textContent=err.message;}};row.append(link);}
    card.append(row);$('libraryCards').append(card);
   }

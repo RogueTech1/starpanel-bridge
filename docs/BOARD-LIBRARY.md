@@ -2,7 +2,7 @@
 
 Open **Board library** in StarPanel. The library contains the **16 products listed in DCSBIOSKit's shop on 26 November 2026**, plus the existing standalone ESP32/Arduino choices. Product names link to manufacturer pages. The catalog is bundled offline; it does not fetch prices, stock or firmware automatically.
 
-Search by name/purpose and filter by vendor or hardware role. **Use in new panel** selects a programmable board in an empty designer. To preserve an existing design, save it and choose **New panel** first. **Open master connection** opens the separate master workflow without connecting or flashing automatically. Other entries explain their role without offering a misleading panel upload.
+Search by name/purpose and filter by vendor or hardware role. **Use in new panel** selects a programmable board in an empty designer. To preserve an existing design, save it and choose **New panel** first. The master card appears first; **Open master setup / I/O** opens the dedicated **Master controller** tab without connecting or flashing automatically. The designer dropdown also lists it in a separate master group as a navigation shortcut, preserving the current panel. Other entries explain their role without offering a misleading panel upload.
 
 ## Programmable slave boards
 

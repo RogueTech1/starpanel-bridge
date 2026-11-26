@@ -28,8 +28,8 @@ A working factory master already performs the required routing. It does not need
 The bundled [`master.cpp`](../firmware-dcsbios/src/master.cpp) follows the [vendor master sketch](https://dcsbioskit.com/master-controller-code/): `DCSBIOS_RS485_MASTER`, UART1 TX-enable **2**, UART2 **3**, UART3 **4**, and `DcsBios::setup()/loop()`. The unused servo header is disabled for a minimal build. The pinned vendor library supplies UART framing and polling.
 
 1. Identify the master USB COM port. Do not select a slave programmer, standalone Mega or ESP32 simply because its port is visible.
-2. In **Panels & controls**, select **DCSBIOSKit Main / Master Controller**, select that port and **Connect**. This designates/protects it as a master port.
-3. Open **Program DCSBIOSKit Master Controller**. Confirm replacement only for that identified board, then choose **Upload master routing firmware**.
+2. Open the dedicated **Master controller** tab, select that port and **Connect as master**. This designates/protects it as a master port. The Board library master card and separately grouped designer dropdown shortcut both open this tab without altering the current panel design.
+3. In **Program / restore master routing firmware**, confirm replacement only for that identified board, then choose **Upload master routing firmware**.
 4. The app closes its runtime serial connection, disables live controls, verifies the master-role image, and uploads with ATmega2560 signature/readback checks. It writes **no slave EEPROM design** to the master. The generic panel uploader remains blocked for designated master ports.
 5. The runtime master link reconnects at **250000 baud**. Verify outputs/inputs, then enable controls intentionally.
 
@@ -39,7 +39,7 @@ Source build:
 uv run --with platformio pio run -d firmware-dcsbios -e dcsbioskit-master
 ```
 
-The master image is `firmware-images/dcsbioskit-master/firmware.hex`; its manifest must declare `role:"master"`. Master upload is separate from the panel board selector. Choosing Mega slave/standalone never selects this image. Actual hardware programming requires the exact board/bootloader and remains a physical validation step.
+The master image is `firmware-images/dcsbioskit-master/firmware.hex`; its manifest must declare `role:"master"`. The master is separately grouped in the board dropdown as a setup shortcut, not a saved panel GPIO profile. Its UART1/UART2/UART3 routing uses fixed TX-enable pins D2/D3/D4 respectively, so standard Mega panel pin assignments do not apply. It has no slave address or panel EEPROM design. Choosing Mega slave/standalone never selects this image. Actual hardware programming requires the exact board/bootloader and remains a physical validation step.
 
 ## Configure each slave for both directions
 

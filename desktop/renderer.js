@@ -2,17 +2,20 @@ const $ = id => document.getElementById(id);
 let initial = true;
 const handle = fn => async () => {try {await fn();} catch (e) {$('result').textContent = e.message;}};
 async function ports() {
-  const list = await window.bridge.ports(); $('ports').replaceChildren();
-  for (const p of list) {const o = document.createElement('option'); o.value = p.path; o.textContent = `${p.path} ${p.manufacturer ?? ''}`; $('ports').append(o);}
+  const list = await window.bridge.ports();
+  for(const id of ['ports','masterPort']){const selected=$(id).value;$(id).replaceChildren();for(const p of list){const o=document.createElement('option');o.value=p.path;o.textContent=`${p.path} ${p.manufacturer??''}`;$(id).append(o);}if(list.some(p=>p.path===selected))$(id).value=selected;}
 }
 $('refresh').onclick = handle(ports);
 $('connect').onclick = handle(async () => {if ($('ports').value) await window.bridge.device($('ports').value, true, $('protocol').value);});
-$('flashMaster').onclick=handle(async()=>{
+$('refreshMasterPorts').onclick=async()=>{try{await ports();}catch(e){$('masterResult').textContent=e.message;}};
+$('connectMaster').onclick=async()=>{try{if(!$('masterPort').value)throw Error('Select the identified master USB port');await window.bridge.device($('masterPort').value,true,'dcsbios-master');$('masterResult').textContent='Master connection requested at 250000 baud. This port is protected from panel firmware uploads.';}catch(e){$('masterResult').textContent=e.message;}};
+document.addEventListener('open-master',()=>{document.querySelector('[data-tab="master"]').click();$('master').scrollIntoView({block:'start'});});
+$('flashMaster').onclick=async()=>{try{
   if(!$('confirmMasterFlash').checked)throw Error('Confirm replacing the Master Controller routing firmware first');
-  if($('protocol').value!=='dcsbios-master')throw Error('Select DCSBIOSKit Main / Master Controller and connect its USB port first');
+  if(!$('masterPort').value)throw Error('Select and connect the identified master USB port first');
   $('flashMaster').disabled=true;
-  try{$('result').textContent=(await window.bridge.flashMaster($('ports').value,true)).message;}finally{$('flashMaster').disabled=false;$('confirmMasterFlash').checked=false;}
-});
+  try{$('masterResult').textContent=(await window.bridge.flashMaster($('masterPort').value,true)).message;}finally{$('flashMaster').disabled=false;$('confirmMasterFlash').checked=false;}
+}catch(e){$('masterResult').textContent=e.message;}};
 $('mode').onchange = handle(async () => {await window.bridge.mode($('mode').value === 'demo'); $('arm').checked = false;});
 $('arm').onchange = handle(() => window.bridge.arm($('arm').checked));
 $('networkEnable').onchange = handle(() => window.bridge.network($('networkEnable').checked));
@@ -54,12 +57,12 @@ async function refresh() {
       }
       card.append(label, content); $('values').append(card);
     }
-    $('devices').replaceChildren();
+    $('devices').replaceChildren();$('masterDevices').replaceChildren();
     for (const d of s.devices) {
       const row = document.createElement('div'); row.className = 'device';
       const label = document.createElement('span'); label.textContent = `${d.name} · ${d.port} · ${d.open ? 'connected' : 'reconnecting'}${d.info?.board?' · '+d.info.board:''}${d.info?.setupActive?' · Wi-Fi setup: '+d.info.setupSsid+' / http://192.168.4.1/ (password StarPanel123)':''}`;
       const button = document.createElement('button'); button.textContent = 'Disconnect'; button.onclick = handle(() => window.bridge.device(d.port, false));
-      row.append(label, button); $('devices').append(row);
+      row.append(label, button); $(d.role==='master'?'masterDevices':'devices').append(row);
     }
     // Preserve focused buttons across updates for keyboard and mouse operation.
     const signature = JSON.stringify([s.config.buttons, s.actions, p.stale, s.demo, s.allowActions]);
@@ -73,6 +76,7 @@ async function refresh() {
       }
     }
     $('switchStatus').textContent=Object.entries(s.switchStatus??{}).map(([name,status])=>`${name}: ${status}`).join('\n')||'No maintained-switch positions received.';
+    if(!$('master').classList.contains('hidden'))$('masterFlashLog').textContent=s.flash.log.join('\n');
     if(!$('raw').classList.contains('hidden')){$('rawFrame').textContent = JSON.stringify(s.raw, null, 2); $('log').textContent = s.logs.map(l => `${l.time} ${l.message}`).join('\n');}
   } catch(e) {$('status').textContent = e.message;}
   setTimeout(refresh, 400);
