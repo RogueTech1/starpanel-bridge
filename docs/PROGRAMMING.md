@@ -2,6 +2,8 @@
 
 This guide is for custom boards, displays and integrations outside the visual designer. It describes the implemented protocol; there is no hidden cloud API or in-game framebuffer export.
 
+For recorded examples, synthetic scenarios and an offline packet generator, see [Data reuse](DATA-REUSE.md). For a fresh source build, see [Recreate and verify](REPRODUCING.md).
+
 ## Architecture and files
 
 ```mermaid

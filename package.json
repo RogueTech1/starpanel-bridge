@@ -14,7 +14,9 @@
     "desktop": "electron desktop/main.cjs",
     "desktop:demo": "electron desktop/main.cjs --demo",
     "dist": "electron-builder --win nsis --x64",
-    "firmware:package": "node scripts/package-firmware.mjs && node scripts/package-avr.mjs"
+    "firmware:package": "node scripts/package-firmware.mjs && node scripts/package-avr.mjs",
+    "verify": "node scripts/verify-project.mjs",
+    "prepare:desktop": "powershell -NoProfile -File scripts/prepare-desktop.ps1"
   },
   "dependencies": {
     "@grpc/grpc-js": "1.14.7",

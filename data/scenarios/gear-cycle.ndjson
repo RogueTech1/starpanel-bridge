@@ -1,0 +1,6 @@
+{"offset_ms":0,"frame":{"vehicle":{"state":{"flight":{"state":{"gear":"VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED"}}}}}}
+{"offset_ms":1000,"frame":{"vehicle":{"state":{"flight":{"state":{"gear":"VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTING"}}}}}}
+{"offset_ms":3000,"frame":{"vehicle":{"state":{"flight":{"state":{"gear":"VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTED"}}}}}}
+{"offset_ms":4000,"frame":{"vehicle":{"state":{"flight":{"state":{"gear":"VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYING"}}}}}}
+{"offset_ms":6000,"frame":{"vehicle":{"state":{"flight":{"state":{"gear":"VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED"}}}}}}
+{"offset_ms":8501}

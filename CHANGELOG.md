@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — reproduction and data documentation
+
+- Added selected sanitized LIVE snapshots, a clearly synthetic gear scenario, asset hashes and data-provenance documentation.
+- Added offline packet replay and an allowlisted private-recording sanitizer; replays always remain labeled demo.
+- Added a fresh-checkout desktop preparation command and complete verification entry point, covering images, data, guides and every shared design.
+- Expanded documentation checks to nested Markdown files and heading anchors; included data/examples in future source-built installers.
+- Reviewed the public checkout, source-built installer and simulator UI. The original v0.5.0 release remains the immutable baseline for its published assets.
+
 ## 0.5.0 — StarPanel Bridge public release
 
 - Renamed and packaged the Windows tray application as StarPanel Bridge.

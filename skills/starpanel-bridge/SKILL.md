@@ -15,6 +15,8 @@ Use this skill for StarPanel Bridge hardware and firmware tasks. Preserve the us
 - Custom code/protocol/EEPROM: `docs/PROGRAMMING.md`, `firmware/src/main.cpp`, `firmware-dcsbios/src/configured.cpp`, `src/avr.mjs`.
 - Connection failures: `docs/TROUBLESHOOTING.md` and non-secret `device_info`.
 - Source builds and tests: `docs/DEVELOPMENT.md` and `package.json`.
+- Fresh-checkout setup: `docs/REPRODUCING.md`; use `npm run prepare:desktop` for ignored native/upload tools.
+- Data reuse, provenance and offline testing: `docs/DATA-REUSE.md`, `data/README.md`, `src/recordings.mjs` and `src/replay.mjs`. Replays must remain marked demo; synthetic scenarios are not recorded evidence.
 
 Read only the sources needed for the current task. Current code and manifests determine support; board aliases or a compiled image do not prove physical validation. Use `docs/VALIDATION.md` for the tested scope. Do not promise synthetic input acceptance or unobserved telemetry fields.
 

@@ -6,6 +6,10 @@ StarPanel Bridge is a Windows tray app that sends live game instruments to ESP32
 
 [Download the Windows installer](https://github.com/RogueTech1/starpanel-bridge/releases/latest) · [Quick start](docs/QUICKSTART.md) · [Choose hardware](docs/HARDWARE.md) · [Designer & logic](docs/DESIGNER.md) · [Advanced programming](docs/PROGRAMMING.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
 
+For a clean source build, follow [Recreate and verify](docs/REPRODUCING.md). To reuse our selected observations without running the game, see [public samples and offline replay](docs/DATA-REUSE.md). Recorded snapshots and synthetic test scenarios are labeled separately.
+
+[Project status and completed review](docs/PROJECT-STATUS.md) records the current verification level and remaining physical checks.
+
 ## What you can build
 
 - OLED flight instruments, fuel and character readouts from the live field catalog.
@@ -76,6 +80,8 @@ The C3 Super Mini was physically flashed and acknowledged the gear rule, each si
 - [Custom firmware, protocol and architecture](docs/PROGRAMMING.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Building and releasing from source](docs/DEVELOPMENT.md)
+- [Fresh-checkout recreation instructions](docs/REPRODUCING.md)
+- [Data provenance, replay and private-recording sanitization](docs/DATA-REUSE.md)
 - [AI-assisted panel programming](docs/AI-ASSISTANT.md)
 - [Validation and known scope](docs/VALIDATION.md)
 - [Security and privacy](SECURITY.md)

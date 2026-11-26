@@ -2,6 +2,8 @@
 
 The repository includes a reusable [StarPanel Bridge skill](../skills/starpanel-bridge/SKILL.md). It guides an assistant through supported boards, wiring, visual rules, telemetry paths, maintained switches, custom firmware and meaningful validation. It does not grant permission to flash unidentified hardware or publish private configuration.
 
+The current checkout also includes [recorded/synthetic samples and offline replay](DATA-REUSE.md), plus [clean source-build instructions](REPRODUCING.md). Ask your assistant to retain provenance labels and validate any shared design or derived data.
+
 ## Install in Codex
 
 Download the skill ZIP from [Releases](https://github.com/RogueTech1/starpanel-bridge/releases/latest), or copy `skills/starpanel-bridge` from a clone into your Codex skill directory (normally `~/.codex/skills/starpanel-bridge`). Keep `SKILL.md` directly inside that folder. Restart/refresh your assistant's skill discovery if necessary. Open the project checkout when working on source so the assistant can read the exact current implementation.

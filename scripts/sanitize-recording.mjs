@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {sanitizeRecording} from '../src/recordings.mjs';
+const [input,output]=process.argv.slice(2);
+if(!input||!output)throw Error('Usage: node scripts/sanitize-recording.mjs <private.ndjson> <sanitized.ndjson>');
+if(path.resolve(input)===path.resolve(output))throw Error('Use a separate output file; keep the original private');
+if(fs.statSync(input).size>10*1024*1024)throw Error('Input exceeds 10 MB; split the recording first');
+const records=fs.readFileSync(input,'utf8').split(/\r?\n/).filter(s=>s.trim()).map((s,i)=>{try{return JSON.parse(s);}catch{throw Error(`Invalid JSON at line ${i+1}`);}});
+if(!records.length||records.length>10000)throw Error('Use 1–10000 records');
+const result=sanitizeRecording(records);
+fs.writeFileSync(output,result.map(r=>JSON.stringify(r)).join('\n')+'\n');
+console.log(`Wrote ${result.length} allowlisted records. Review the output before sharing; missing timestamps have null offsets.`);

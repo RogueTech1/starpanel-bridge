@@ -66,3 +66,5 @@ Close the window to keep panels running. Click the tray icon to reopen it. Tray 
 ## Offline help and AI assistance
 
 **About & help → Offline guides** opens the documentation bundled with the installer. For custom assistance, install the included [AI skill](AI-ASSISTANT.md); the release includes a separate skill ZIP for sharing. The [Live Data tab](DESIGNER.md#live-data-view) inspects current fields at 1 Hz only while visible; tray operation continues without rendering it.
+
+Guides on `main` can be newer than the released installer. For current sample data and helper scripts, use a [source checkout](REPRODUCING.md) and [data-reuse instructions](DATA-REUSE.md). A locally rebuilt installer includes the current data and example designs; advanced source/script links refer to the repository checkout.

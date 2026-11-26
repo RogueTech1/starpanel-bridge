@@ -32,6 +32,10 @@ extraResources:
     to: licenses
   - from: skills
     to: skills
+  - from: examples
+    to: examples
+  - from: data
+    to: data
 win:
   target:
     - target: nsis

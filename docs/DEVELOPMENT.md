@@ -1,5 +1,7 @@
 # Build and release
 
+For the shortest tested path from a new clone, use [Recreate and verify](REPRODUCING.md). `npm run prepare:desktop` prepares the ignored upload tools and native helper using the committed firmware images; full firmware compilation below is needed when modifying or independently rebuilding them.
+
 ## Requirements
 
 - Windows 10/11 x64 for the desktop installer, bundled AVR uploader and keyboard helper.
@@ -35,9 +37,9 @@ Bundled firmware images are versioned for reproducible checkout tests; rebuild a
 ## Test and package
 
 ```powershell
-npm test
-npm audit --omit=dev
-powershell -NoProfile -File scripts/build-native.ps1
+npm run verify
+npm audit
+npm run prepare:desktop
 npm run dist
 ```
 

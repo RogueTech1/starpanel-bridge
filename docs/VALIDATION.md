@@ -17,3 +17,7 @@ Release: **0.5.0**, November 26, 2026. This matrix records what was observed rat
 | Release checks | 27 unit/integration tests pass. Runtime and build dependency audits report no known vulnerabilities. Packaged UI smoke and NSIS install passed. A final installed real-feed check requires the game to be running; the game was closed during this check, so the release distinguishes that from the earlier real-feed/hardware evidence. |
 
 The schema catalog defines possible fields, not guarantees that each is populated on every ship. Missing telemetry stays unavailable. Prototype Arduino output mapping covers speed, altitude, gear and oxygen, while ESP32 JSON panels can select the wider catalog. Physical panels render their own instruments; this is not an MFD framebuffer stream.
+
+## Subsequent documentation and data review
+
+The follow-up on `main` adds reusable sanitized snapshots, a synthetic gear scenario, offline replay, data manifests and fresh-checkout tooling. All 31 software tests, public asset checks and example designs pass. An isolated source snapshot also passed desktop preparation, installer build, packaged simulator smoke and screenshot review. These checks do not add physical-board or in-game evidence to the v0.5.0 matrix above. See the [handoff report](PROJECT-STATUS.md) for details and the next physical checks.

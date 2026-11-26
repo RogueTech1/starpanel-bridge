@@ -1,0 +1,40 @@
+{
+  "format": "starpanel-data-1",
+  "files": [
+    {
+      "path": "schema/live/sc_extrait.desc",
+      "bytes": 8022,
+      "sha256": "d43427ea35bf6876fb2edcc2ba5a5bbd3535d16f4815aeda3c1ab7285cbc2f04"
+    },
+    {
+      "path": "schema/live/sc_extrait.proto",
+      "bytes": 8541,
+      "sha256": "786c42242bba287170cf21b2984e3b24a554840229317104776facc57c93b370"
+    },
+    {
+      "path": "schema/live/field-catalog.json",
+      "bytes": 25406,
+      "sha256": "d2b39c00da7d5d114dc8d0f06cd53ec2ba806891e319b5e3668c6a445223e7e3"
+    },
+    {
+      "path": "schema/local.desc",
+      "bytes": 12719,
+      "sha256": "26fc796bf0432b8d7b0320131bbe67cc0ea4333cad84548d3dea1202355467b9"
+    },
+    {
+      "path": "data/samples/live-4.10.3-character.json",
+      "bytes": 543,
+      "sha256": "43e2291a3c72e8b9770ee568727fc1c43b4ae2c9b737a9f8b83c04ffc2430d4c"
+    },
+    {
+      "path": "data/samples/live-4.10.3-seated.json",
+      "bytes": 1584,
+      "sha256": "9b5c9473541b4ac3332bbbf74ad0ca4bcbbe4aef7ee9b4a4af39414b1d0df9fc"
+    },
+    {
+      "path": "data/scenarios/gear-cycle.ndjson",
+      "bytes": 645,
+      "sha256": "2531509cd38b4192a27a543afca18920c5431498ae58b07d60d54506dea8d9bc"
+    }
+  ]
+}
