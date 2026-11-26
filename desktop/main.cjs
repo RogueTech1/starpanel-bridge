@@ -5,7 +5,7 @@ const os = require('node:os');
 const {randomBytes} = require('node:crypto');
 const base = path.resolve(__dirname, '..');
 let win, bridge, schema, Game, loadSchema, Bridge, NetworkPanels, network, catalog, ports, validateProfile, compileProfile, flashFirmware, logs = [];
-let flashing=false, flashState={busy:false,log:[]},WindowsKeyboard,keyboard,BOARDS,KEYS,isAvr,flashAvr,flashMaster,BIOS_FIELDS;
+let flashing=false, flashState={busy:false,log:[]},WindowsKeyboard,keyboard,BOARDS,KEYS,isAvr,ensureUniqueSlaveAddress,flashAvr,flashMaster,BIOS_FIELDS;
 const smoke = process.argv.includes('--smoke-test');
 const liveCheck = process.argv.includes('--live-check');
 const startHidden = process.argv.includes('--hidden');
@@ -84,7 +84,7 @@ app.whenReady().then(async () => {
   ({Game, loadSchema} = await import('../src/game.mjs'));
   ({Bridge} = await import('../src/bridge.mjs'));
   ({NetworkPanels} = await import('../src/network.mjs'));
-  ({validateProfile,compileProfile,BOARDS,isAvr} = await import('../src/profiles.mjs'));
+  ({validateProfile,compileProfile,BOARDS,isAvr,ensureUniqueSlaveAddress} = await import('../src/profiles.mjs'));
   ({WindowsKeyboard,KEYS}=await import('../src/keyboard.mjs'));
   ({flashAvr,flashMaster}=await import('../src/avr.mjs'));
   ({BIOS_FIELDS}=await import('../src/dcsbios.mjs'));
@@ -92,6 +92,7 @@ app.whenReady().then(async () => {
   if(process.platform==='win32'&&fs.existsSync(helper))keyboard=new WindowsKeyboard(helper);
   ({flashFirmware} = await import('../src/flasher.mjs'));
   ({catalog} = await import('../src/catalog.mjs'));
+  const {describeOutput}=await import('../src/io-descriptions.mjs');
   ({SerialPort: ports} = await import('serialport'));
   const local = smoke ? (app.isPackaged ? path.join(process.resourcesPath,'schema/ptu.desc') : path.join(base,'schema/local.desc')) : (app.isPackaged ? path.join(process.resourcesPath, 'schema/telemetry.desc') : path.join(base, 'schema/live/sc_extrait.desc'));
   schema = loadSchema(fs.existsSync(local) ? local : path.join(base, 'vendor/sc-telemetry-deck/schema/sc_extrait.desc'));
@@ -119,7 +120,12 @@ app.whenReady().then(async () => {
   });
   ipcMain.handle('network-token', () => settings.networkToken);
   ipcMain.handle('panels',()=>panels);
-  ipcMain.handle('hardware',()=>({boards:BOARDS,keys:Object.keys(KEYS)}));
+  const {hardwareLibrary}=await import('../src/hardware-library.mjs');
+  ipcMain.handle('hardware',()=>({boards:BOARDS,keys:Object.keys(KEYS),library:hardwareLibrary()}));
+  ipcMain.handle('hardware-product',async(_event,id)=>{
+    const item=hardwareLibrary().find(p=>p.id===id);if(!item?.url)throw Error('No vendor product link for this board');
+    await shell.openExternal(item.url);
+  });
   ipcMain.handle('share-panel',async(_event,id)=>{
     const p=panels.find(p=>p.id===id);if(!p)throw Error('Save the design first');
     const result=await dialog.showSaveDialog(win,{title:'Share panel design',defaultPath:`${p.name.replace(/[^a-zA-Z0-9-]/g,'-')}.starpanel.json`,filters:[{name:'StarPanel design',extensions:['json']}]});
@@ -142,7 +148,7 @@ app.whenReady().then(async () => {
     validateProfile(p,new Set(catalog(schema).map(f=>f.path)));
     if(panels.length>=16&&!panels.some(old=>old.id===p.id))throw Error('Maximum 16 saved panels');
     const clean={id:p.id,name:p.name,board:p.board,address:p.address??1,components:p.components.map(c=>c.kind==='readout'?{id:c.id,kind:c.kind,label:c.label,path:c.path}:c.kind==='led'?{id:c.id,kind:c.kind,label:c.label,pin:c.pin,count:c.count??1,path:c.path,match:c.match,operator:c.operator??'equals',effect:c.effect??'pulse',color:c.color??'#ff0000',brightness:c.brightness??64,...(c.rules?{rules:c.rules.map(r=>({operator:r.operator??'equals',match:r.match,effect:r.effect??'solid',color:r.color??'#ff0000',brightness:r.brightness??64,periodMs:r.periodMs??2400}))}:{})}:{id:c.id,kind:c.kind,label:c.label,pin:c.pin,action:c.action,...(c.kind==='switch'?{path:c.path,onValue:c.onValue,offValue:c.offValue,offAction:c.offAction}:{})})};
-    if(['mega','nano'].includes(clean.board)&&panels.some(old=>old.id!==clean.id&&['mega','nano'].includes(old.board)&&(old.address??1)===clean.address))throw Error('Another saved slave uses this address. Choose a unique slave address.');
+    ensureUniqueSlaveAddress(clean,panels);
     panels=panels.filter(old=>old.id!==p.id);panels.push(clean);fs.writeFileSync(panelsPath,JSON.stringify(panels,null,2));return clean;
   });
   ipcMain.handle('program-panel',async(_event,id,port,wifi)=>{
@@ -200,7 +206,7 @@ app.whenReady().then(async () => {
   });
   ipcMain.handle('ports', () => ports.list());
   ipcMain.handle('wifi-setup',(_event,port)=>{const d=bridge.devices.get(port);if(!d||d.protocol==='dcsbios'||!d.port?.isOpen)throw Error('Connect the ESP32 with USB JSON first');bridge.send(d,{v:1,type:'wifi_setup'});return 'Setup requested. Connect to the StarPanel Wi-Fi network (password StarPanel123), then open http://192.168.4.1/';});
-  ipcMain.handle('catalog', () => catalog(schema).map(f=>({...f,bios:BIOS_FIELDS[f.path]??null})));
+  ipcMain.handle('catalog', () => catalog(schema).map(f=>({...f,...describeOutput(f.path),bios:BIOS_FIELDS[f.path]??null})));
   const {buildReference}=await import('../src/reference.mjs');
   const referenceSchema=file=>catalog(loadSchema(app.isPackaged?path.join(process.resourcesPath,'schema',file==='live'?'telemetry.desc':'ptu.desc'):path.join(base,'schema',file==='live'?'live/sc_extrait.desc':'local.desc')));
   const liveReferenceFields=referenceSchema('live'),ptuReferenceFields=referenceSchema('ptu');
@@ -311,6 +317,9 @@ app.whenReady().then(async () => {
           filter('referenceDirection','output');
           const outputRows=document.querySelectorAll('.reference-entry').length;
           if(inputRows<100||outputRows!==174)throw Error('Unified input/output reference failed');
+          filter('referenceSearch','Landing gear position');
+          if(document.querySelectorAll('.reference-entry').length!==1||!document.getElementById('referenceDetail').textContent.includes('Moving toward the deployed position.')||!document.getElementById('referenceDetail').textContent.includes('Retracting'))throw Error('Friendly purpose/state lookup failed');
+          filter('referenceSearch','');
           filter('referenceScope','ptu');
           if(document.querySelectorAll('.reference-entry').length!==50)throw Error('PTU reference separation failed');
           filter('referenceScope','bus');
@@ -324,6 +333,18 @@ app.whenReady().then(async () => {
           let referenceMutations=0;const observer=new MutationObserver(()=>referenceMutations++);observer.observe(document.getElementById('reference'),{subtree:true,childList:true,characterData:true});
           await new Promise(resolve=>setTimeout(resolve,1300));observer.disconnect();
           if(referenceMutations)throw Error('Hidden reference continued rendering');
+          document.getElementById('newPanel').click();
+          document.querySelector('[data-tab="library"]').click();
+          document.getElementById('libraryVendor').value='DCSBIOSKit';document.getElementById('libraryVendor').dispatchEvent(new Event('change'));
+          if(document.querySelectorAll('#libraryCards article').length!==16)throw Error('Incomplete vendor hardware library');
+          const devkit=document.querySelector('[data-product="devkit"]');
+          if(devkit.querySelectorAll('li').length!==3||[...devkit.querySelectorAll('button')].some(b=>b.textContent==='Use in new panel'))throw Error('DevKit role protection failed');
+          [...document.querySelectorAll('[data-product="nano-shield"] button')].find(b=>b.textContent==='Use in new panel').click();
+          if(document.getElementById('panelBoard').value!=='dcs-nano-shield'||document.getElementById('addressRow').classList.contains('hidden'))throw Error('Shield designer selection failed');
+          document.getElementById('addButton').click();
+          const pins=[...document.getElementById('componentPin').options].map(o=>Number(o.value));
+          if([2,5,6,13].some(pin=>pins.includes(pin)))throw Error('Reserved shield pins offered');
+          document.getElementById('savedPanels').value=design.id;document.getElementById('savedPanels').dispatchEvent(new Event('change'));
           return {before: before.packet, after: after.packet, ack, fieldCount: fields.length, portCount: ports.length,
             cards: document.querySelectorAll('.value').length, status: document.getElementById('status').textContent,designerSaved:true,inputRows,outputRows,liveRows};
         })()`);
@@ -342,6 +363,9 @@ app.whenReady().then(async () => {
         await win.webContents.executeJavaScript(`document.querySelector('[data-tab="reference"]').click();document.getElementById('reference').scrollIntoView({block:'start'});`);
         await new Promise(resolve=>setTimeout(resolve,200));
         fs.writeFileSync(path.join(out,'desktop-reference.png'),(await win.webContents.capturePage()).toPNG());
+        await win.webContents.executeJavaScript(`document.querySelector('[data-tab="library"]').click();document.getElementById('library').scrollIntoView({block:'start'});`);
+        await new Promise(resolve=>setTimeout(resolve,250));
+        fs.writeFileSync(path.join(out,'desktop-library.png'),(await win.webContents.capturePage()).toPNG());
         if (errors.length) throw Error(errors.join('\n'));
         console.log('DESKTOP_SMOKE_OK'); app.exit(0);
       } catch (err) {fs.writeFileSync(path.join(out, 'desktop-error.txt'), err.stack); console.error(err); app.exit(1);}

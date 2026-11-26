@@ -18,13 +18,23 @@ BOARDS['uno-usb']={...BOARDS['nano-usb'],label:'Arduino Uno R3 · standalone USB
 BOARDS['leonardo-usb']={label:'Arduino Leonardo · standalone USB',pins:[4,5,6,7,8,9,10,11,12,13,18,19,20,21],sda:2,scl:3};
 BOARDS['micro-usb']={...BOARDS['leonardo-usb'],label:'Arduino Micro · standalone USB'};
 BOARDS['promicro-usb']={...BOARDS['leonardo-usb'],label:'Pro Micro ATmega32U4 · 5V / 16 MHz USB',pins:[4,5,6,7,8,9,10,16,18,19,20,21]};
-for(const [key,b]of Object.entries(BOARDS)){b.avr=['mega','nano','mega-usb','nano-usb','nano-old','uno-usb','leonardo-usb','micro-usb','promicro-usb'].includes(key);b.role=['mega','nano'].includes(key)?'DCSBIOSKit slave':'Standalone panel';}
+BOARDS.mega.label='DCSBIOSKit DCS-BIOS Mega Slave';
+BOARDS.nano.label='DCSBIOSKit DCS-BIOS Nano Slave';
+BOARDS.nano.pins=BOARDS.nano.pins.filter(pin=>pin!==6);
+BOARDS['dcs-nano-shield']={...BOARDS.nano,label:'DCSBIOSKit Nano Shield + Arduino Nano',pins:[...BOARDS.nano.pins]};
+BOARDS['dcs-mega-shield']={...BOARDS.mega,label:'DCSBIOSKit Mega Shield + Arduino Mega 2560',pins:[...BOARDS.mega.pins]};
+const slaveBoards=['mega','nano','dcs-nano-shield','dcs-mega-shield'];
+for(const [key,b]of Object.entries(BOARDS)){b.slave=slaveBoards.includes(key);b.avr=b.slave||['mega-usb','nano-usb','nano-old','uno-usb','leonardo-usb','micro-usb','promicro-usb'].includes(key);b.role=b.slave?'DCSBIOSKit slave':'Standalone panel';if(b.slave)b.notes='RS485 TX enable D2 is reserved. Backlight/revision-sensitive pins are excluded. Disconnect the powered bus before connecting the programmer. Verify PCB pin labels.';}
 export const isAvr=board=>BOARDS[board]?.avr===true;
+export const isSlave=board=>BOARDS[board]?.slave===true;
+export function ensureUniqueSlaveAddress(profile,panels){
+ if(isSlave(profile.board)&&panels.some(old=>old.id!==profile.id&&isSlave(old.board)&&(old.address??1)===(profile.address??1)))throw Error('Another saved slave uses this address. Choose a unique slave address.');
+}
 export const BIOS_OUTPUTS=['vehicle.state.flight.instruments.speed','vehicle.state.flight.instruments.altitude','vehicle.state.flight.state.gear','actor.vitals.oxygen.current'];
 export function validateProfile(p, paths) {
   if (!p || !/^[a-z0-9]{8}$/.test(p.id) || typeof p.name !== 'string' || p.name.length > 32 || !BOARDS[p.board]) throw Error('Invalid panel identity or board');
   if (!Array.isArray(p.components) || p.components.length > 15) throw Error('Maximum 8 inputs, 6 readouts and 1 LED chain');
-  if(['mega','nano'].includes(p.board)&&(!Number.isInteger(p.address??1)||(p.address??1)<1||(p.address??1)>126))throw Error('Slave address must be 1 through 126');
+  if(isSlave(p.board)&&(!Number.isInteger(p.address??1)||(p.address??1)<1||(p.address??1)>126))throw Error('Slave address must be 1 through 126');
   const ids = new Set(), pins = new Set(); let buttons=0, readouts=0, leds=0;
   for (const c of p.components) {
     if (!/^[a-z0-9]{6}$/.test(c.id) || ids.has(c.id)) throw Error('Invalid or duplicate component ID'); ids.add(c.id);

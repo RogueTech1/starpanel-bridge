@@ -2,6 +2,8 @@
 
 ## Choose your path
 
+Use the app's **Board library** for the full reviewed DCSBIOSKit product catalog, dedicated slave/shield choices and separate master/passive/DevKit roles. See [Board library](BOARD-LIBRARY.md) for pin reservations and revision limits.
+
 **ESP32** is the easiest route for independent Wi-Fi panels, the full telemetry catalog, OLED readouts and rule-driven WS2812 indicators. **DCSBIOSKit** is the primary supported Arduino ecosystem for a wired cockpit with one USB master and many RS485 slaves. **Standalone Arduino USB** lets you use Uno R3, Mega 2560 or classic ATmega328P Nano boards independently, without vendor bus hardware.
 
 The designer supports up to eight buttons/maintained switches, six OLED readouts, and one WS2812 chain per ESP32 panel. Arduino panels support the same input count and six lines chosen from four instrument sources. The host has 32 button and 32 field aliases shared by all designs; default aliases also count. The IP server accepts up to eight authenticated clients. Saving 16 designs does not mean every maximum-sized design fits the host simultaneously.
@@ -45,7 +47,7 @@ Use the [Getting Started Kit](https://dcsbioskit.com/product/getting-started-kit
 
 Topology: **PC USB → vendor master → vendor hubs/buses → unique-address slaves → local switches/display**. The factory master firmware already routes compatible traffic; use the dedicated master upload/restore flow if needed. StarPanel's slave firmware uses a private Star Citizen memory map; existing DCS aircraft sketches do not automatically become Star Citizen panels. Do not run a DCS aircraft export and StarPanel into the same master simultaneously.
 
-Follow the exact revision's labels and [manufacturer instructions](https://dcsbioskit.com/instructions/). Powered RS485 connectors are **not Ethernet**. Never connect them to a PC network port, switch or router. Do not hot-plug powered bus cables. Never connect slave USB/programmer and its powered bus at the same time. Mega shield backlighting reserves pins 4/5; RS485 TX-enable reserves pin 2. The designer excludes these for vendor profiles.
+Follow the exact revision's labels and [manufacturer instructions](https://dcsbioskit.com/instructions/). Powered RS485 connectors are **not Ethernet**. Never connect them to a PC network port, switch or router. Do not hot-plug powered bus cables. Never connect slave USB/programmer and its powered bus at the same time. Mega Shield text conflicts on backlight D4/D5 versus D4/D13; vendor profiles conservatively exclude all three. Nano profiles exclude D5/D6 and other revision-sensitive pins. RS485 TX-enable reserves D2. Check the exact PCB revision; see the board library guide.
 
 OLED I2C: Mega D20/D21; Nano A4/A5 (numeric 18/19). Arduino readouts use a compact text renderer and four sources: speed, altitude, landing gear and oxygen. Other telemetry outputs remain available through an ESP32 or custom firmware. Vendor LED matrices, backlight drivers, servos and encoders need their own renderer/driver; they are not claimed plug-and-play in this release.
 

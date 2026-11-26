@@ -7,6 +7,8 @@ import {SerialPort} from 'serialport';
 import {BOARDS,BIOS_OUTPUTS,isAvr} from './profiles.mjs';
 export const AVR_TARGETS={mega:{image:'mega-panel',part:'atmega2560',protocol:'wiring',baud:115200},nano:{image:'nano-panel',part:'atmega328p',protocol:'arduino',baud:115200},'mega-usb':{image:'mega-standalone',part:'atmega2560',protocol:'wiring',baud:115200},'nano-usb':{image:'nano-standalone',part:'atmega328p',protocol:'arduino',baud:115200},'nano-old':{image:'nano-standalone',part:'atmega328p',protocol:'arduino',baud:57600},'uno-usb':{image:'uno-standalone',part:'atmega328p',protocol:'arduino',baud:115200}};
 for(const name of ['leonardo','micro','promicro'])AVR_TARGETS[name+'-usb']={image:name+'-standalone',part:'atmega32u4',protocol:'avr109',baud:57600,touch:true};
+AVR_TARGETS['dcs-nano-shield']={...AVR_TARGETS.nano};
+AVR_TARGETS['dcs-mega-shield']={...AVR_TARGETS.mega};
 export const MASTER_TARGET=Object.freeze({image:'dcsbioskit-master',part:'atmega2560',protocol:'wiring',baud:115200});
 function verifiedImage(root,target,role){
  const dir=path.join(root,target.image),manifest=JSON.parse(fs.readFileSync(path.join(dir,'manifest.json'))),image=path.join(dir,'firmware.hex');

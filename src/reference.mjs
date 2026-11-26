@@ -1,4 +1,6 @@
 import {BIOS_FIELDS} from './dcsbios.mjs';
+import {describeInput,describeOutput} from './io-descriptions.mjs';
+import {outputStates} from './io-states.mjs';
 
 export function referenceCategory(path){
  if(path.startsWith('actor.vitals'))return 'Character / Vitals';
@@ -24,15 +26,15 @@ export function buildReference({activeFields,liveFields,ptuFields,actions,advert
  const fields=new Map([...ptuFields,...activeFields].map(f=>[f.path,f]));
  const outputs=[...fields.values()].map(f=>{
   const bios=BIOS_FIELDS[f.path]??null;
-  return {id:`output:${f.path}`,kind:'output',key:f.path,category:referenceCategory(f.path),...f,activeSchema:active.has(f.path),liveSchema:live.has(f.path),bios,
+  return {id:`output:${f.path}`,kind:'output',key:f.path,category:referenceCategory(f.path),...f,...describeOutput(f.path),expected:outputStates(f),activeSchema:active.has(f.path),liveSchema:live.has(f.path),bios,
    snippets:{mapping:json({fields:{my_readout:f.path}}),component:!f.repeated?json({kind:'readout',label:'Readout',path:f.path}):null,
     arduino:bios?`// StarPanel RS485 map; requires fresh heartbeat/status handling.\nvoid onReadout(char* value) {\n  // Render value on your display.\n}\nDcsBios::StringBuffer<${bios.bufferLength}> readout(0x${bios.address.toString(16)}, onReadout);`:null}};
  });
  const actionMap=new Map(actions.map(a=>[a.action_name,a]));
  for(const a of advertisedActions){const item=typeof a==='string'?{action_name:a}:a;actionMap.set(item.action_name,{...actionMap.get(item.action_name),...item});}
- const inputs=[...actionMap.values()].map(a=>({id:`input:${a.action_name}`,kind:'input',key:a.action_name,category:inputCategories[a.category]??a.category??'Other actions',holdable:a.holdable===true,
+ const inputs=[...actionMap.values()].map(a=>({id:`input:${a.action_name}`,kind:'input',key:a.action_name,...describeInput(a.action_name),category:inputCategories[a.category]??a.category??'Other actions',holdable:a.holdable===true,
   snippets:{mapping:json({buttons:{my_button:a.action_name}}),component:json({kind:'button',label:'Button',action:a.action_name})}}));
- for(const [alias,key]of Object.entries(config.buttons??{}))if(key.startsWith('key_'))inputs.push({id:`keyboard:${alias}`,kind:'keyboard',key,alias,category:'Keyboard / Configured bindings',snippets:{mapping:json({buttons:{[alias]:key}}),component:json({kind:'button',label:alias.slice(0,16),action:key})}});
+ for(const [alias,key]of Object.entries(config.buttons??{}))if(key.startsWith('key_'))inputs.push({id:`keyboard:${alias}`,kind:'keyboard',key,alias,...describeInput(key),category:'Keyboard / Configured bindings',snippets:{mapping:json({buttons:{[alias]:key}}),component:json({kind:'button',label:alias.slice(0,16),action:key})}});
  return [...outputs,...inputs].sort((a,b)=>a.key.localeCompare(b.key));
 }
 

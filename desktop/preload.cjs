@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('bridge', {
   catalog: () => ipcRenderer.invoke('catalog'), mode: demo => ipcRenderer.invoke('mode', demo),
   inputReference:()=>ipcRenderer.invoke('input-reference'),
   reference:()=>ipcRenderer.invoke('reference-data'),copyReference:(id,format)=>ipcRenderer.invoke('reference-copy',id,format),
+  hardwareProduct:id=>ipcRenderer.invoke('hardware-product',id),
   arm: enabled => ipcRenderer.invoke('arm', enabled), device: (port, attach, protocol = 'json') => ipcRenderer.invoke('device', port, attach, protocol),
   press: button => ipcRenderer.invoke('press', button), saveConfig: text => ipcRenderer.invoke('save-config', text),
   network: enabled => ipcRenderer.invoke('network', enabled), networkToken: () => ipcRenderer.invoke('network-token'),

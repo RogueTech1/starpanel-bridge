@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 — full vendor board library
+
+- Added a searchable Board library covering all 16 reviewed DCSBIOSKit store products and existing standalone profiles, with product links and distinct master/slave/passive/custom roles.
+- Added separate Nano Shield and Mega Shield panel profiles sharing verified slave images; address validation/collision checks include all slave variants.
+- Conservatively reserved conflicting backlight pins, including removing D6 from the legacy Nano slave profile. Existing D6 designs require reassignment before upload.
+- Documented DevKit controller/bootloader/pinout limits and prevented passive/unverified products from appearing as panel flash targets.
+- Added plain-English names and purpose descriptions for every bundled output/action, searchable in I/O Reference and shown in designer choices; uncertain units and newly discovered actions are explicitly labeled.
+- Added expected output states/values with friendly enum meanings, exact wire constants/codes, boolean semantics, numeric guidance and unavailable-state rules.
+
 ## 0.7.0 — integrated I/O Reference
 
 - Replaced separate catalog/mapping lookup tabs with a searchable input/output reference, version/category/status filters, live readings, enums, mapped aliases and copyable examples.

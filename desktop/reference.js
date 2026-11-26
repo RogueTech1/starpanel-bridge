@@ -18,16 +18,18 @@ function filtered(){
   if(status==='mapped'&&!mapped(e).length)return false;
   if(status==='received'&&!['Received','Simulator value','Advertised by game','Simulator action'].includes(referenceReading(e,snapshot).state))return false;
   const address=e.bios?'0x'+e.bios.address.toString(16):'';
-  return `${e.key} ${e.category} ${shortType(e)} ${address} ${mapped(e).join(' ')} ${Object.keys(e.enums??{}).join(' ')}`.toLowerCase().includes(q);
+  return `${e.label} ${e.description} ${e.key} ${e.category} ${shortType(e)} ${address} ${mapped(e).join(' ')} ${Object.keys(e.enums??{}).join(' ')}`.toLowerCase().includes(q);
  });
 }
 function detail(){
  const target=$('referenceDetail');target.replaceChildren();const e=entries.find(e=>e.id===selected);if(!e){target.append(node('p','No matching entries. Try another filter.'));return;}
- target.append(node('span',e.kind==='output'?'OUTPUT ← GAME':e.kind==='keyboard'?'KEYBOARD → GAME':'INPUT → GAME','eyebrow'),node('h3',e.key,'reference-key'),node('p',e.category));
+ target.append(node('span',e.kind==='output'?'OUTPUT ← GAME':e.kind==='keyboard'?'KEYBOARD → GAME':'INPUT → GAME','eyebrow'),node('h3',e.label),node('p',e.key,'reference-key'),node('p',e.description,'reference-purpose'),node('p',e.category));
  const state=node('div',undefined,'reference-reading');state.id='referenceReading';target.append(state);
  const definitions=node('dl');
  const pair=(label,value)=>definitions.append(node('dt',label),node('dd',value));
  pair('Type',shortType(e));
+ if(e.unit)pair('Units',e.unit);
+ pair('Description',e.descriptionSource);
  if(e.kind==='output'){
   pair('Schema',`${e.liveSchema?'LIVE 4.10.3 + saved PTU':'Saved PTU only'} · ${e.activeSchema?'in current schema':'outside current schema'}`);
   pair('Presence',e.presence==='explicit'?'Explicit optional presence':'Wire presence; omitted is not proof of an available value');
@@ -38,7 +40,13 @@ function detail(){
   if(e.kind==='input')pair('Hold',e.holdable?'Historical metadata says holdable; current panel programmer uses discrete presses':'Discrete action');
  }
  pair('Mapped aliases',mapped(e).join(', ')||'None');target.append(definitions);
- if(e.enums){target.append(node('h4','Enum values'));const table=node('table');for(const [name,value]of Object.entries(e.enums)){const row=node('tr');row.append(node('td',name),node('td',String(value)));table.append(row);}target.append(table);}
+ if(e.expected){
+  target.append(node('h4','Expected states / values'),node('p',e.expected.summary));
+  if(e.expected.states.length){const table=node('table',undefined,'expected-table');const header=node('tr');for(const name of ['State','Meaning','Value'])header.append(node('th',name));table.append(header);
+   for(const state of e.expected.states){const row=node('tr');row.append(node('td',state.label),node('td',state.meaning),node('td',`${typeof state.value==='string'?state.value:JSON.stringify(state.value)}${state.number===undefined?'':` (${state.number})`}`));table.append(row);}target.append(table);
+  }
+  target.append(node('p',e.expected.unavailable));
+ }
  const controls=node('div',undefined,'row');
  const button=(label,fn,disabled=false)=>{const b=node('button',label);b.disabled=disabled;b.onclick=async()=>{try{await fn();}catch(err){$('referenceResult').textContent=err.message;}};controls.append(b);};
  button('Copy '+(e.kind==='output'?'field path':'action'),async()=>{$('referenceResult').textContent=await window.bridge.copyReference(e.id,'key');});
@@ -53,7 +61,7 @@ function detail(){
  updateReading(e);
 }
 function updateReading(e){
- const target=$('referenceReading');if(!target||!e)return;const reading=referenceReading(e,snapshot);target.replaceChildren(node('strong',reading.state));
+ const target=$('referenceReading');if(!target||!e)return;const reading=referenceReading(e,snapshot),meaning=e.expected?.states.find(s=>s.value===reading.value);target.replaceChildren(node('strong',reading.state+(meaning?' · '+meaning.label:'')));
  if(reading.value!==null)target.append(node('pre',typeof reading.value==='string'?reading.value:JSON.stringify(reading.value,null,2)));
  const use=[...$('referenceDetail').querySelectorAll('button')].find(b=>b.textContent==='Add to designer');if(use)use.disabled=!(e.kind==='output'?e.activeSchema&&!e.repeated:e.kind==='keyboard'||snapshot.actions.includes(e.key));
 }
@@ -63,7 +71,7 @@ function draw(){
  $('referenceStats').textContent=`${entries.filter(e=>e.kind==='output').length} outputs · ${entries.filter(e=>e.kind==='input').length} API references`;
  if(!rows.some(e=>e.id===selected)){selected=rows[0]?.id??null;detail();}
  const signature=JSON.stringify([rows.map(e=>e.id),selected]);
- if(signature!==listSignature){listSignature=signature;$('referenceList').replaceChildren();for(const e of rows){const b=node('button',undefined,'reference-entry'+(e.id===selected?' active':''));b.dataset.id=e.id;b.append(node('strong',e.key),node('small',`${e.kind==='output'?'OUT':'IN'} · ${e.category} · ${shortType(e)}`),node('span','','reference-entry-state'));b.onclick=()=>{selected=e.id;detail();draw();};$('referenceList').append(b);}}
+ if(signature!==listSignature){listSignature=signature;$('referenceList').replaceChildren();for(const e of rows){const b=node('button',undefined,'reference-entry'+(e.id===selected?' active':''));b.dataset.id=e.id;b.title=e.description;b.append(node('strong',e.label),node('small',e.key),node('small',`${e.kind==='output'?'OUT':'IN'} · ${e.category} · ${shortType(e)}`),node('span','','reference-entry-state'));b.onclick=()=>{selected=e.id;detail();draw();};$('referenceList').append(b);}}
  for(const b of $('referenceList').children){const e=entries.find(e=>e.id===b.dataset.id);b.lastChild.textContent=referenceReading(e,snapshot).state;}
  updateReading(entries.find(e=>e.id===selected));
 }
