@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-let fields = [], initial = true;
+let initial = true;
 const handle = fn => async () => {try {await fn();} catch (e) {$('result').textContent = e.message;}};
 async function ports() {
   const list = await window.bridge.ports(); $('ports').replaceChildren();
@@ -28,16 +28,6 @@ document.querySelectorAll('[data-tab]').forEach(button => button.onclick = () =>
   $('ipPanels').classList.toggle('hidden',button.dataset.tab!=='panels');
   document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b === button));
 });
-function catalog() {
-  $('catalogRows').replaceChildren();
-  const query = $('search').value.toLowerCase();
-  for (const f of fields.filter(f => f.path.toLowerCase().includes(query))) {
-    const row = document.createElement('div'); row.className = 'catalog-row';
-    row.textContent = `${f.path}  ·  ${f.type}${f.repeated ? '[]' : ''}`;
-    if (f.enums) row.title = JSON.stringify(f.enums); $('catalogRows').append(row);
-  }
-}
-$('search').oninput = catalog;
 async function refresh() {
   if(document.hidden){setTimeout(refresh,1000);return;}
   try {
@@ -82,13 +72,12 @@ async function refresh() {
         $('controls').append(b);
       }
     }
-    $('actionCatalog').textContent = s.actions.length ? [...s.actions].sort().join('\n') : 'No actions advertised by the current source.';
     $('switchStatus').textContent=Object.entries(s.switchStatus??{}).map(([name,status])=>`${name}: ${status}`).join('\n')||'No maintained-switch positions received.';
     if(!$('raw').classList.contains('hidden')){$('rawFrame').textContent = JSON.stringify(s.raw, null, 2); $('log').textContent = s.logs.map(l => `${l.time} ${l.message}`).join('\n');}
   } catch(e) {$('status').textContent = e.message;}
   setTimeout(refresh, 400);
 }
-void ports(); void window.bridge.catalog().then(rows => {fields = rows; catalog();}); void refresh();
+void ports(); void refresh();
 for(const button of document.querySelectorAll('[data-help]'))button.onclick=handle(()=>window.bridge.help(button.dataset.help));
 $('enableTelemetry').onclick=handle(async()=>{$('setupResult').textContent=await window.bridge.enableTelemetry();});
 if(localStorage.getItem('setupCollapsed')==='true')$('welcome').open=false;

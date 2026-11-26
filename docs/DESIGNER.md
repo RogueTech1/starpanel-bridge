@@ -14,7 +14,7 @@ Add **Button**, choose a free GPIO, then choose **Keyboard binding** or **Advert
 
 The Windows helper checks the foreground process is `StarCitizen`, sends a 60 ms scan-code chord, then releases its keys. **Enable controls** gates live inputs and resets at app start. Simulator controls never call this helper. An acknowledged chord is not proof the game accepted the binding: confirm the effect in telemetry or visually. The app neither injects into game memory nor bypasses input restrictions.
 
-API mode is available for schemas with an action service. Only the currently advertised allowlist may execute. A historical action reference remains in Mappings for discovery, clearly labeled; it is not an executable allowlist. Maintained switches using API mode currently use the same selected action for ON and OFF; distinct ON/OFF keyboard keys are available in the designer, and advanced profiles may supply distinct API actions.
+API mode is available for schemas with an action service. Only the currently advertised allowlist may execute. A historical action reference remains in I/O Reference for discovery, clearly labeled; it is not an executable allowlist. Maintained switches using API mode currently use the same selected action for ON and OFF; distinct ON/OFF keyboard keys are available in the designer, and advanced profiles may supply distinct API actions.
 
 ## Maintained switches
 

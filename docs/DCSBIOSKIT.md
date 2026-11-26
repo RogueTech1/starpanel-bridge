@@ -65,11 +65,11 @@ The master broadcasts the same stream on its three buses. Slave listeners choose
 | Oxygen | `0x5040` | 8-byte ASCII slot; `StringBuffer<7>` |
 | Heartbeat | `0xfffe` | changing uint16 sequence |
 
-The host reads these bus values from the raw telemetry fields, independently of user-renamed desktop aliases. Missing/stale values become `--` and the fresh bit clears. Slaves also expire the heartbeat after two seconds. The four readout fields show their StarPanel RS485 addresses in **Mappings → Outputs**. The code contract is [`src/dcsbios.mjs`](../src/dcsbios.mjs); extending the map requires matching host encoding and slave listeners.
+The host reads these bus values from the raw telemetry fields, independently of user-renamed desktop aliases. Missing/stale values become `--` and the fresh bit clears. Slaves also expire the heartbeat after two seconds. The four readout fields show their StarPanel RS485 addresses in **I/O Reference → Outputs**. The code contract is [`src/dcsbios.mjs`](../src/dcsbios.mjs); extending the map requires matching host encoding and slave listeners.
 
 ## How BORT relates
 
-[BORT](https://github.com/charliefoxtwo/Bort) is a DCS-BIOS reference/testing UI that reads DCS-BIOS aircraft JSON and helps find addresses/control definitions. It is useful context for the discovery workflow, but its DCS aircraft addresses do not describe Star Citizen. StarPanel's **Live Data**, **Field catalog** and **Mappings** provide the corresponding game-facing discovery views; the private bus map translates selected outputs for these Arduino panels. BORT is referenced, not bundled or used as a runtime dependency.
+[BORT](https://github.com/charliefoxtwo/Bort) is a DCS-BIOS reference/testing UI that reads DCS-BIOS aircraft JSON and helps find addresses/control definitions. It is useful context for the discovery workflow, but its DCS aircraft addresses do not describe Star Citizen. StarPanel's **Live Data**, **I/O Reference** provide the corresponding game-facing discovery views; the private bus map translates selected outputs for these Arduino panels. BORT is referenced, not bundled or used as a runtime dependency.
 
 ## Wiring and validation boundary
 

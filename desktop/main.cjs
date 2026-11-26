@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain, Tray, Menu, dialog, shell} = require('electron');
+const {app, BrowserWindow, ipcMain, Tray, Menu, dialog, shell, clipboard} = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -201,6 +201,17 @@ app.whenReady().then(async () => {
   ipcMain.handle('ports', () => ports.list());
   ipcMain.handle('wifi-setup',(_event,port)=>{const d=bridge.devices.get(port);if(!d||d.protocol==='dcsbios'||!d.port?.isOpen)throw Error('Connect the ESP32 with USB JSON first');bridge.send(d,{v:1,type:'wifi_setup'});return 'Setup requested. Connect to the StarPanel Wi-Fi network (password StarPanel123), then open http://192.168.4.1/';});
   ipcMain.handle('catalog', () => catalog(schema).map(f=>({...f,bios:BIOS_FIELDS[f.path]??null})));
+  const {buildReference}=await import('../src/reference.mjs');
+  const referenceSchema=file=>catalog(loadSchema(app.isPackaged?path.join(process.resourcesPath,'schema',file==='live'?'telemetry.desc':'ptu.desc'):path.join(base,'schema',file==='live'?'live/sc_extrait.desc':'local.desc')));
+  const liveReferenceFields=referenceSchema('live'),ptuReferenceFields=referenceSchema('ptu');
+  const referenceEntries=()=>buildReference({activeFields:catalog(schema),liveFields:liveReferenceFields,ptuFields:ptuReferenceFields,actions:JSON.parse(fs.readFileSync(path.join(__dirname,'assets/input-reference.json'))).actions,advertisedActions:[...bridge.panel.actions,...(bridge.actionDetails??[])],config:bridge.panel.config});
+  ipcMain.handle('reference-data',()=>({entries:referenceEntries(),actionVersion:JSON.parse(fs.readFileSync(path.join(__dirname,'assets/input-reference.json'))).game_version}));
+  ipcMain.handle('reference-copy',(_event,id,format)=>{
+    if(!['mapping','component','arduino','key'].includes(format))throw Error('Unknown reference format');
+    const entry=referenceEntries().find(e=>e.id===id);if(!entry)throw Error('Unknown reference entry');
+    const text=format==='key'?entry.key:entry.snippets[format];if(!text)throw Error('No example available for this entry');
+    clipboard.writeText(text);return 'Copied '+format+' to clipboard.';
+  });
   ipcMain.handle('input-reference',()=>JSON.parse(fs.readFileSync(path.join(__dirname,'assets/input-reference.json'))));
   ipcMain.handle('mode', (_event, demo) => {if (typeof demo !== 'boolean') throw Error('Invalid mode'); start(demo);});
   ipcMain.handle('arm', (_event, enabled) => {if (typeof enabled !== 'boolean') throw Error('Invalid state');if(enabled&&!bridge.status().inputsSupported)throw Error('This game version exposes read-only telemetry');bridge.panel.allowActions = enabled;});
@@ -292,13 +303,27 @@ app.whenReady().then(async () => {
           await document.getElementById('savePanel').onclick();
           const maintained=(await window.bridge.panels()).find(p=>p.id===design.id).components.find(c=>c.kind==='switch');
           if(maintained?.offAction!=='key_G'||!maintained.path)throw Error('Maintained switch designer failed');
-          document.querySelector('[data-tab="mapping"]').click();
-          await new Promise(resolve=>setTimeout(resolve,1100));
-          document.getElementById('showInputs').click();
-          const inputRows=document.querySelectorAll('#inputGroups .mapping-row').length;
-          document.getElementById('showOutputs').click();
-          const outputRows=document.querySelectorAll('#outputGroups .mapping-row').length;
-          if(inputRows<100||outputRows<170)throw Error('Separate input/output mappings failed');
+          document.querySelector('[data-tab="reference"]').click();
+          await new Promise(resolve=>setTimeout(resolve,700));
+          const filter=(id,value)=>{const e=document.getElementById(id);e.value=value;e.dispatchEvent(new Event(id==='referenceSearch'?'input':'change'));};
+          filter('referenceDirection','input');
+          const inputRows=document.querySelectorAll('.reference-entry').length;
+          filter('referenceDirection','output');
+          const outputRows=document.querySelectorAll('.reference-entry').length;
+          if(inputRows<100||outputRows!==174)throw Error('Unified input/output reference failed');
+          filter('referenceScope','ptu');
+          if(document.querySelectorAll('.reference-entry').length!==50)throw Error('PTU reference separation failed');
+          filter('referenceScope','bus');
+          if(document.querySelectorAll('.reference-entry').length!==4)throw Error('RS485 address filter failed');
+          filter('referenceSearch','0x5010');
+          if(document.querySelectorAll('.reference-entry').length!==1||!document.getElementById('referenceDetail').textContent.includes('StringBuffer<7>'))throw Error('Address lookup/code example failed');
+          [...document.querySelectorAll('#referenceDetail button')].find(b=>b.textContent==='Add to designer').click();
+          await new Promise(resolve=>setTimeout(resolve,100));
+          if(document.getElementById('editor').classList.contains('hidden')||document.getElementById('componentField').value!=='vehicle.state.flight.instruments.speed')throw Error('Reference to designer failed');
+          await document.getElementById('savePanel').onclick();
+          let referenceMutations=0;const observer=new MutationObserver(()=>referenceMutations++);observer.observe(document.getElementById('reference'),{subtree:true,childList:true,characterData:true});
+          await new Promise(resolve=>setTimeout(resolve,1300));observer.disconnect();
+          if(referenceMutations)throw Error('Hidden reference continued rendering');
           return {before: before.packet, after: after.packet, ack, fieldCount: fields.length, portCount: ports.length,
             cards: document.querySelectorAll('.value').length, status: document.getElementById('status').textContent,designerSaved:true,inputRows,outputRows,liveRows};
         })()`);
@@ -314,6 +339,9 @@ app.whenReady().then(async () => {
         fs.writeFileSync(path.join(out, 'desktop-designer.png'), (await win.webContents.capturePage()).toPNG());
         await win.webContents.executeJavaScript(`document.querySelector('[data-tab="panels"]').click();window.scrollTo(0,0);`);
         fs.writeFileSync(path.join(out, 'desktop-demo.png'), (await win.webContents.capturePage()).toPNG());
+        await win.webContents.executeJavaScript(`document.querySelector('[data-tab="reference"]').click();document.getElementById('reference').scrollIntoView({block:'start'});`);
+        await new Promise(resolve=>setTimeout(resolve,200));
+        fs.writeFileSync(path.join(out,'desktop-reference.png'),(await win.webContents.capturePage()).toPNG());
         if (errors.length) throw Error(errors.join('\n'));
         console.log('DESKTOP_SMOKE_OK'); app.exit(0);
       } catch (err) {fs.writeFileSync(path.join(out, 'desktop-error.txt'), err.stack); console.error(err); app.exit(1);}

@@ -10,7 +10,7 @@ Build physical Star Citizen cockpit panels with an installed Windows tray app, c
 - Receive live instruments over USB, paired Wi-Fi TCP or a DCSBIOSKit RS485 master.
 - Map keyboard bindings and telemetry-backed switches so the game can follow physical positions.
 - Configure up to four ordered conditions for a WS2812 chain: color, pulse, strobe, solid light and stale-data shutdown.
-- Inspect current fields in **Live Data**, possible fields in **Field catalog**, and separate **Inputs / Outputs** in **Mappings**. Bus-capable readouts also show their private RS485 addresses.
+- Inspect current fields in **Live Data** and look up inputs, outputs, enums, code examples and RS485 addresses in the integrated **I/O Reference**. Add supported entries directly to your panel design.
 - Share credential-free designs and use the included AI skill for custom boards/firmware.
 
 The installer includes firmware and upload tools. End users do not need Node, Python, PlatformIO or an Arduino IDE for built-in profiles. Closing the window keeps the backend running in the tray; hidden UI rendering pauses.
@@ -51,6 +51,7 @@ Powered DCSBIOSKit RS485 is **not Ethernet**. Follow the [vendor instructions](h
 ## Documentation and reproducible source
 
 - [Quick start / Wi-Fi](docs/QUICKSTART.md)
+- [Integrated I/O Reference](docs/IO-REFERENCE.md)
 - [Game telemetry activation and verification](docs/TELEMETRY-SETUP.md)
 - [SC Telemetry Deck I/O research and comparison](docs/SC-TELEMETRY-DECK.md)
 - [Hardware, parts and wiring](docs/HARDWARE.md)

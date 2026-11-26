@@ -144,7 +144,7 @@ For custom sketches, start with [`firmware-dcsbios/src/configured.cpp`](../firmw
 
 Add a board definition in `src/profiles.mjs`, a matching PlatformIO environment, exact GPIO validation in firmware, a manifest-producing packaging target, and the uploader's allowed target. Do not reuse an image solely because a board says “ESP32.” Test chip/flash rejection before writing. For a new renderer, subscribe only to required aliases, preserve null/false/zero, implement freshness and reconnect handling, and keep input events bounded and idempotent where the transport supports it.
 
-For telemetry definitions consult the app's **Field catalog**, [`schema/live/field-catalog.json`](../schema/live/field-catalog.json), and the decoded Diagnostics view. Schema presence does not establish field availability or units for every ship. There is no MFD video stream, arbitrary game-state write API, or exported world-coordinate/pitch/roll guarantee in this release. Custom firmware can render its own pages using available fields.
+For telemetry definitions consult the app's **I/O Reference**, [`schema/live/field-catalog.json`](../schema/live/field-catalog.json), and the decoded Diagnostics view. Schema presence does not establish field availability or units for every ship. There is no MFD video stream, arbitrary game-state write API, or exported world-coordinate/pitch/roll guarantee in this release. Custom firmware can render its own pages using available fields.
 
 
 Master firmware and both bus directions are covered in the [DCSBIOSKit guide](DCSBIOSKIT.md). BORT is a reference for DCS aircraft definitions; StarPanel uses its own game catalog and private bus map.

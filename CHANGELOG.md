@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased — telemetry research documentation
+## 0.7.0 — integrated I/O Reference
+
+- Replaced separate catalog/mapping lookup tabs with a searchable input/output reference, version/category/status filters, live readings, enums, mapped aliases and copyable examples.
+- Added reference-to-designer insertion with active-schema, action-advertisement, board and component checks.
+- Added exact Arduino listener snippets for assigned RS485 readouts and gated reference refresh to the visible tab.
+
+### Telemetry research documentation
 
 - Saved version-specific Windows/Wine telemetry activation, PTU action-enable setting, listener/stream verification and rollback instructions with upstream attribution.
 - Compared SC Telemetry Deck's pinned schema/action reference: 50 catalog entries beyond LIVE, matching our saved PTU catalog, and no new action names. Documented read-only/action limitations and privacy-sensitive fields.

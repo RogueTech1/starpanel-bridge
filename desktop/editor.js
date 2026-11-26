@@ -31,6 +31,20 @@
  async function portList(){const old=$('programPort').value;options('programPort',(await window.bridge.ports()).map(p=>[p.path,`${p.path} ${p.manufacturer??''}`]),old||undefined);}
  async function save(){commit();model=await window.bridge.savePanel(model);await savedList();$('programResult').textContent='Design saved.';}
  function add(kind){commit();const used=new Set(model.components.map(c=>c.pin));const pin=boards[model.board].pins.find(p=>!used.has(p));const c={id:uid(6),kind,label:kind==='readout'?'Speed':kind==='led'?'Gear lamp':kind==='switch'?'Gear switch':'Button'};if(kind==='readout')c.path='vehicle.state.flight.instruments.speed';else if(kind==='led')Object.assign(c,{pin:!used.has(3)&&boards[model.board].pins.includes(3)?3:pin,path:gear,match:prefix+'DEPLOYED',rules:[{operator:'equals',match:prefix+'DEPLOYED',effect:'pulse',color:'#ff0000',brightness:64,periodMs:2400},{operator:'contains',match:'ING',effect:'blink',color:'#ffff00',brightness:64,periodMs:2000},{operator:'equals',match:prefix+'RETRACTED',effect:'solid',color:'#00ff00',brightness:64,periodMs:2400}]});else{Object.assign(c,{pin,action:'key_G'});if(kind==='switch')Object.assign(c,{path:gear,onValue:prefix+'DEPLOYED',offValue:prefix+'RETRACTED',offAction:'key_G'});}model.components.push(c);selected=model.components.length-1;list();properties();}
+ document.addEventListener('reference-use',async event=>{
+  try{
+   if(!model)throw Error('Panel designer is still loading');
+   const {kind,key}=event.detail;const output=kind==='output',f=fields.find(f=>f.path===key);
+   if(output&&(!f||f.repeated))throw Error('This output is not a scalar field in the active schema');
+   if(output&&avr()&&!f.bios)throw Error('This Arduino design supports only the four RS485 readouts. Choose an ESP32 design for other fields.');
+   if(!output){const s=await window.bridge.snapshot();if(kind==='keyboard'?!Object.values(s.config.buttons).includes(key):!s.actions.includes(key))throw Error('This action is reference-only for the current source');}
+   commit();
+   if(model.components.length>=15||model.components.filter(c=>output?c.kind==='readout':['button','switch'].includes(c.kind)).length>=(output?6:8))throw Error('This design has reached its component limit');
+   if(!output&&!boards[model.board].pins.some(pin=>!model.components.some(c=>c.pin===pin)))throw Error('No free GPIO remains in this design');
+   add(output?'readout':'button');const c=model.components[selected];c.label=(output?key.split('.').at(-1):key.replace(/^v_|^key_/, '').replaceAll('_',' ')).slice(0,16);if(output)c.path=key;else c.action=key;
+   list();properties();document.querySelector('[data-tab="editor"]').click();$('programResult').textContent='Added from I/O Reference. Review label/GPIO and save the design before programming.';$('referenceResult').textContent='Added to the current unsaved design.';
+  }catch(err){$('referenceResult').textContent=err.message;}
+ });
  $('newPanel').onclick=fresh;$('savePanel').onclick=safely(save);$('sharePanel').onclick=safely(async()=>{await save();await window.bridge.sharePanel(model.id);});$('importPanel').onclick=safely(async()=>{const p=await window.bridge.importPanel();if(p)load(p);});$('savedPanels').onchange=()=>{const p=saved.find(p=>p.id===$('savedPanels').value);if(p)load(p);};
  for(const kind of ['button','switch','readout','led'])$('add'+kind[0].toUpperCase()+kind.slice(1)).onclick=safely(()=>add(kind));
  $('starterPanel').onclick=()=>{fresh();for(const [label,path]of [['Speed','vehicle.state.flight.instruments.speed'],['Radar alt','vehicle.state.flight.instruments.radar_altitude'],['Gear',gear],['Health','actor.vitals.health.current']])model.components.push({id:uid(6),kind:'readout',label,path});selected=0;list();properties();};
