@@ -4,7 +4,6 @@ import {EventEmitter} from 'node:events';
 import {validateProfile,compileProfile} from '../src/profiles.mjs';
 import {flashFirmware,loadFirmware,NativeSerial} from '../src/flasher.mjs';
 import {Bridge} from '../src/bridge.mjs';
-import {generateSketch} from '../src/sketch.mjs';
 // fileURLToPath also handles workspace spaces on Windows.
 import {fileURLToPath} from 'node:url';
 const images=fileURLToPath(new URL('../firmware-images/',import.meta.url));
@@ -18,12 +17,11 @@ test('panel compiler creates matching host/device aliases and rejects reserved o
   const bad=structuredClone(p);bad.components[0].pin=19;assert.throws(()=>validateProfile(bad,paths),/GPIO/);
   bad.components[0].pin=4;bad.components.push({...bad.components[0],id:'abcdef'});assert.throws(()=>validateProfile(bad,paths),/GPIO/);
 });
-test('Arduino sketch uses selected button pin, private command and matching host map',()=>{
+test('Arduino compiler creates distinct slave command aliases and validates output mappings',()=>{
   const design={...structuredClone(p),board:'mega'};design.components[0].pin=8;
-  validateProfile(design,paths);const sketch=generateSketch(design),compiled=compileProfile(design,{buttons:{},fields:{}});
-  assert.match(sketch,/SC_1234ABCD_ABC123/);assert.match(sketch,/\"1\",8/);
+  validateProfile(design,paths);const compiled=compileProfile(design,{buttons:{},fields:{}});
   assert.equal(compiled.config.legacyInputs.SC_1234ABCD_ABC123,'p1234abcd_abc123');
-  assert.match(sketch,/0x5010/);design.components[1].path='unsupported';assert.throws(()=>generateSketch(design),/prototype readouts/);
+  assert.equal(compiled.config.fields.p1234abcd_abc124,'vehicle.state.flight.instruments.speed');design.components[1].path='unsupported';assert.throws(()=>validateProfile(design,paths),/telemetry field/);
 });
 test('all packaged firmware manifests and binary hashes validate',()=>{
   for(const profile of ['esp32','esp32s3','esp32c3','esp32c3supermini','esp32s2mini','esp32-wifi','esp32s3-wifi','esp32c3-wifi'])assert.equal(loadFirmware(images,profile).files.length,4);

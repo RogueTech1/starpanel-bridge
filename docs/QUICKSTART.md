@@ -54,7 +54,7 @@ Choose a standalone Uno/Nano/Mega profile for independent USB boards, or a DCSBI
 
 Select the slave's programmer COM port, confirm replacement, and choose **Upload saved Arduino design**. The app writes and verifies the bundled firmware and EEPROM design. Arduino mapping changes require this upload again. No Arduino IDE is needed for this workflow.
 
-For standalone boards, connect their USB ports under **Panels & controls**, choosing **Arduino / DCSBIOSKit · 250000 baud**. Multiple standalone boards use separate COM ports. For vendor slaves, disconnect the programmer, connect the powered bus following the [vendor instructions](https://dcsbioskit.com/instructions/), and connect only the master's USB port to the app with the same 250000-baud protocol. Never flash slave firmware to the master.
+For standalone boards, connect their USB ports under **Panels & controls**, choosing **Standalone Arduino USB · 250000 baud**. Multiple standalone boards use separate COM ports. For vendor slaves, disconnect the programmer, connect the powered bus following the [vendor instructions](https://dcsbioskit.com/instructions/), and connect only the master's USB port to the app with **DCSBIOSKit Main / Master Controller** role at 250000 baud. Use its separate [master programming flow](DCSBIOSKIT.md) for routing firmware; never flash a slave image to it.
 
 ## Controls and tray operation
 

@@ -4,8 +4,8 @@ This guide describes a clean Windows checkout, a source-built app, reuse of the 
 
 ## Choose a source version
 
-- **Current `main`:** includes these recreation instructions, reusable data and offline replay tools added after the first release.
-- **Tag `v0.5.0`:** the immutable original public release. Its installer/source checksums are attached to that release. Follow its version of `docs/DEVELOPMENT.md`; newer helper commands are not part of that tag.
+- **Current `main`:** includes current recreation instructions, synthetic protocol fixtures, offline tools and master/slave programming.
+- **Tag `v0.5.0`:** the original source baseline. Superseded downloads may be retired; use the latest cleaned release for deployment. Follow its version of `docs/DEVELOPMENT.md`; newer helper commands are not part of that tag.
 
 Pin a commit/tag when sharing results. A source rebuild can reproduce behavior and verify assets, but is **not promised byte-for-byte identical** to the published installer: packaging timestamps, toolchains and dependency resolution can affect bytes. Use the official release's checksums to verify the downloaded official installer, not to reject every locally rebuilt installer.
 
@@ -53,7 +53,7 @@ When the game is running, `--live-check` uses a separate profile and reads 30 fr
 
 To change firmware or independently validate a target compiler build, follow [Build all firmware](DEVELOPMENT.md#build-all-firmware). Build all intended targets before `npm run firmware:package`; PlatformIO can clean other environments after project configuration changes. Packaging then hashes the actual build outputs.
 
-There are eight ESP32 images and eight configurable AVR images. Several board menu entries share a deliberately compatible image; the 17 board/profile choices are not 17 separate firmware binaries. Keep exact chip, flash capacity, pin map and USB mode distinct. DCSBIOSKit masters retain vendor firmware; upload panel firmware only to the correct slave/programmer or standalone board.
+There are eight ESP32 images and eight panel AVR images plus a master image. Several board menu entries share a deliberately compatible image; the 17 board/profile choices are not 17 separate firmware binaries. Keep exact chip, flash capacity, pin map and USB mode distinct. DCSBIOSKit masters use the separate master routing target; upload panel firmware only to the correct slave/programmer or standalone board.
 
 The vendor library is pinned and the documented duplicate-definition patch is applied only to its build cache. Some upstream transitive metadata/tool behavior can change, so retain the resolved package list, source archive and image manifests when exact compiler inputs matter. Run `node scripts/verify-images.mjs` after packaging. Never turn off chip/signature/hash checks to make a mismatched build appear valid.
 

@@ -4,8 +4,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const {randomBytes} = require('node:crypto');
 const base = path.resolve(__dirname, '..');
-let win, bridge, schema, Game, loadSchema, Bridge, NetworkPanels, network, catalog, ports, validateProfile, compileProfile, flashFirmware, generateSketch, logs = [];
-let flashing=false, flashState={busy:false,log:[]},WindowsKeyboard,keyboard,BOARDS,KEYS,isAvr,flashAvr;
+let win, bridge, schema, Game, loadSchema, Bridge, NetworkPanels, network, catalog, ports, validateProfile, compileProfile, flashFirmware, logs = [];
+let flashing=false, flashState={busy:false,log:[]},WindowsKeyboard,keyboard,BOARDS,KEYS,isAvr,flashAvr,flashMaster,BIOS_FIELDS;
 const smoke = process.argv.includes('--smoke-test');
 const liveCheck = process.argv.includes('--live-check');
 const startHidden = process.argv.includes('--hidden');
@@ -86,11 +86,11 @@ app.whenReady().then(async () => {
   ({NetworkPanels} = await import('../src/network.mjs'));
   ({validateProfile,compileProfile,BOARDS,isAvr} = await import('../src/profiles.mjs'));
   ({WindowsKeyboard,KEYS}=await import('../src/keyboard.mjs'));
-  ({flashAvr}=await import('../src/avr.mjs'));
+  ({flashAvr,flashMaster}=await import('../src/avr.mjs'));
+  ({BIOS_FIELDS}=await import('../src/dcsbios.mjs'));
   const helper=app.isPackaged?path.join(process.resourcesPath,'tools/StarPanelKeyboard.exe'):path.join(base,'native/StarPanelKeyboard.exe');
   if(process.platform==='win32'&&fs.existsSync(helper))keyboard=new WindowsKeyboard(helper);
   ({flashFirmware} = await import('../src/flasher.mjs'));
-  ({generateSketch}=await import('../src/sketch.mjs'));
   ({catalog} = await import('../src/catalog.mjs'));
   ({SerialPort: ports} = await import('serialport'));
   const local = smoke ? (app.isPackaged ? path.join(process.resourcesPath,'schema/ptu.desc') : path.join(base,'schema/local.desc')) : (app.isPackaged ? path.join(process.resourcesPath, 'schema/telemetry.desc') : path.join(base, 'schema/live/sc_extrait.desc'));
@@ -161,14 +161,6 @@ app.whenReady().then(async () => {
     bridge.panel.config=compiled.config;fs.writeFileSync(configPath,JSON.stringify(compiled.config,null,2));
     return result;
   });
-  ipcMain.handle('export-sketch',async(_event,id)=>{
-    const p=panels.find(p=>p.id===id);if(!p)throw Error('Save the panel first');
-    validateProfile(p,new Set(catalog(schema).map(f=>f.path)));const code=generateSketch(p);
-    const result=await dialog.showSaveDialog(win,{title:'Export Arduino slave sketch',defaultPath:path.join(app.getPath('downloads'),`SC_Panel_${p.id}.ino`),filters:[{name:'Arduino sketch',extensions:['ino']}]});
-    if(result.canceled)return {message:'Export canceled'};
-    fs.writeFileSync(result.filePath,code);const compiled=compileProfile(p,bridge.panel.config);bridge.panel.config=compiled.config;fs.writeFileSync(configPath,JSON.stringify(compiled.config,null,2));
-    return {message:`Saved ${result.filePath}. Host mappings updated. Compile/upload to the slave, then connect the master with the DCS-BIOS protocol.`};
-  });
   ipcMain.handle('flash',async(_event,port,profile,confirmed)=>{
     if(confirmed!==true)throw Error('Confirm that replacing the board program is intended');
     if((settings.masterPorts??[]).includes(port))throw Error('This port is designated as a DCSBIOSKit master. Slave/panel firmware uploads are blocked. Use the separate slave programmer port.');
@@ -190,9 +182,25 @@ app.whenReady().then(async () => {
     }catch(err){flashState.log.push(err.message);throw err;}
     finally{flashing=false;flashState.busy=false;}
   });
+  ipcMain.handle('flash-master',async(_event,port,confirmed)=>{
+    if(confirmed!==true)throw Error('Confirm replacing the identified DCSBIOSKit Master firmware');
+    if(flashing)throw Error('An upload is already running');
+    if(!(settings.masterPorts??[]).includes(port))throw Error('Connect this port as DCSBIOSKit Main / Master Controller first');
+    if(!(await ports.list()).some(p=>p.path===port))throw Error('Selected master port is disconnected');
+    flashing=true;bridge.panel.allowActions=false;flashState={busy:true,log:['Uploading master routing firmware; live controls disabled.']};
+    try{
+      const serial=bridge.devices.get(port)?.port;
+      const closed=serial?.isOpen?new Promise(resolve=>serial.once('close',resolve)):Promise.resolve();
+      bridge.detach(port);await closed;
+      const root=app.isPackaged?path.join(process.resourcesPath,'firmware-images'):path.join(base,'firmware-images');
+      const tools=app.isPackaged?path.join(process.resourcesPath,'tools/avrdude'):path.join(base,'tools/avrdude');
+      const result=await flashMaster({root,tools,port,confirmed:true,progress:message=>{flashState.log.push(message);flashState.log=flashState.log.slice(-80);}});
+      await new Promise(resolve=>setTimeout(resolve,1200));bridge.attach(port,'dcsbios-master');flashState.log.push(result.message);return result;
+    }catch(e){flashState.log.push(e.message);throw e;}finally{flashing=false;flashState.busy=false;}
+  });
   ipcMain.handle('ports', () => ports.list());
   ipcMain.handle('wifi-setup',(_event,port)=>{const d=bridge.devices.get(port);if(!d||d.protocol==='dcsbios'||!d.port?.isOpen)throw Error('Connect the ESP32 with USB JSON first');bridge.send(d,{v:1,type:'wifi_setup'});return 'Setup requested. Connect to the StarPanel Wi-Fi network (password StarPanel123), then open http://192.168.4.1/';});
-  ipcMain.handle('catalog', () => catalog(schema));
+  ipcMain.handle('catalog', () => catalog(schema).map(f=>({...f,bios:BIOS_FIELDS[f.path]??null})));
   ipcMain.handle('input-reference',()=>JSON.parse(fs.readFileSync(path.join(__dirname,'assets/input-reference.json'))));
   ipcMain.handle('mode', (_event, demo) => {if (typeof demo !== 'boolean') throw Error('Invalid mode'); start(demo);});
   ipcMain.handle('arm', (_event, enabled) => {if (typeof enabled !== 'boolean') throw Error('Invalid state');if(enabled&&!bridge.status().inputsSupported)throw Error('This game version exposes read-only telemetry');bridge.panel.allowActions = enabled;});

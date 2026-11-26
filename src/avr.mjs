@@ -7,6 +7,21 @@ import {SerialPort} from 'serialport';
 import {BOARDS,BIOS_OUTPUTS,isAvr} from './profiles.mjs';
 export const AVR_TARGETS={mega:{image:'mega-panel',part:'atmega2560',protocol:'wiring',baud:115200},nano:{image:'nano-panel',part:'atmega328p',protocol:'arduino',baud:115200},'mega-usb':{image:'mega-standalone',part:'atmega2560',protocol:'wiring',baud:115200},'nano-usb':{image:'nano-standalone',part:'atmega328p',protocol:'arduino',baud:115200},'nano-old':{image:'nano-standalone',part:'atmega328p',protocol:'arduino',baud:57600},'uno-usb':{image:'uno-standalone',part:'atmega328p',protocol:'arduino',baud:115200}};
 for(const name of ['leonardo','micro','promicro'])AVR_TARGETS[name+'-usb']={image:name+'-standalone',part:'atmega32u4',protocol:'avr109',baud:57600,touch:true};
+export const MASTER_TARGET=Object.freeze({image:'dcsbioskit-master',part:'atmega2560',protocol:'wiring',baud:115200});
+function verifiedImage(root,target,role){
+ const dir=path.join(root,target.image),manifest=JSON.parse(fs.readFileSync(path.join(dir,'manifest.json'))),image=path.join(dir,'firmware.hex');
+ if(manifest.profile!==target.image||(role==='master'&&manifest.role!=='master')||createHash('sha256').update(fs.readFileSync(image)).digest('hex')!==manifest.sha256)throw Error('Arduino firmware checksum or role validation failed');
+ return image;
+}
+export async function uploadAvr(tools,args,progress=()=>{},launch=spawn){
+ await new Promise((resolve,reject)=>{const child=launch(path.join(tools,'avrdude.exe'),['-C',path.join(tools,'avrdude.conf'),...args],{windowsHide:true,shell:false});let tail='';const timer=setTimeout(()=>child.kill(),120000);const log=bytes=>{const message=bytes.toString();tail=(tail+message).slice(-2000);progress(message);};child.stdout.on('data',log);child.stderr.on('data',log);child.once('error',e=>{clearTimeout(timer);reject(e);});child.once('exit',code=>{clearTimeout(timer);code===0?resolve():reject(Error(`Arduino upload failed (${code}). Check board, bootloader and COM port. ${tail}`));});});
+}
+export async function flashMaster({root,tools,port,confirmed=false,progress=()=>{}},launch=spawn){
+ if(confirmed!==true)throw Error('Confirm programming the identified DCSBIOSKit Master Controller');
+ const t=MASTER_TARGET,image=verifiedImage(root,t,'master');
+ await uploadAvr(tools,['-p',t.part,'-c',t.protocol,'-P',port,'-b',String(t.baud),'-D','-U',`flash:w:${image}:i`],progress,launch);
+ return {ok:true,message:'Master routing firmware uploaded and verified. Reconnect the master at 250000 baud; configure slaves separately with unique addresses.'};
+}
 async function bootloaderPort(port){
  const before=await SerialPort.list(),selected=before.find(p=>p.path===port);if(!selected)throw Error('Selected board disconnected');
  const serial=new SerialPort({path:port,baudRate:1200,autoOpen:false});await new Promise((r,j)=>serial.open(e=>e?j(e):r()));
@@ -32,14 +47,13 @@ export function intelHex(bytes){
 }
 export async function flashAvr({root,tools,port,profile,progress=()=>{}}){
   const target=AVR_TARGETS[profile.board];if(!target)throw Error('Unsupported AVR board');
-  const dir=path.join(root,target.image),manifest=JSON.parse(fs.readFileSync(path.join(dir,'manifest.json'))),image=path.join(dir,'firmware.hex');
-  if(manifest.profile!==target.image||createHash('sha256').update(fs.readFileSync(image)).digest('hex')!==manifest.sha256)throw Error('Arduino firmware checksum failed');
-  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'starpanel-'));const eeprom=path.join(tmp,'panel.hex');
+  const image=verifiedImage(root,target,'panel');
+  const tempRoot=fs.realpathSync(os.tmpdir()),tmp=fs.mkdtempSync(path.join(tempRoot,'starpanel-'));const eeprom=path.join(tmp,'panel.hex');
   fs.writeFileSync(eeprom,intelHex(eepromProfile(profile)));
   try{
     if(target.touch){progress('Resetting native USB board into bootloader…');port=await bootloaderPort(port);}
-    const args=['-C',path.join(tools,'avrdude.conf'),'-p',target.part,'-c',target.protocol,'-P',port,'-b',String(target.baud),'-D','-U',`flash:w:${image}:i`,'-U',`eeprom:w:${eeprom}:i`];
-    await new Promise((resolve,reject)=>{const child=spawn(path.join(tools,'avrdude.exe'),args,{windowsHide:true,shell:false});let tail='';const timer=setTimeout(()=>{child.kill();},120000);const log=bytes=>{const message=bytes.toString();tail=(tail+message).slice(-2000);progress(message);};child.stdout.on('data',log);child.stderr.on('data',log);child.once('error',e=>{clearTimeout(timer);reject(e);});child.once('exit',code=>{clearTimeout(timer);code===0?resolve():reject(Error(`Arduino upload failed (${code}). Check port, board and bootloader. ${tail}`));});});
+    const args=['-p',target.part,'-c',target.protocol,'-P',port,'-b',String(target.baud),'-D','-U',`flash:w:${image}:i`,'-U',`eeprom:w:${eeprom}:i`];
+    await uploadAvr(tools,args,progress);
     return {ok:true,message:'Arduino firmware and interface uploaded and verified. Connect standalone USB, or disconnect the slave programmer before connecting the DCSBIOSKit bus.'};
-  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
+  }finally{if(path.dirname(fs.realpathSync(tmp))!==tempRoot||!path.basename(tmp).startsWith('starpanel-'))throw Error('Unexpected temporary directory');fs.rmSync(tmp,{recursive:true,force:true});}
 }

@@ -17,10 +17,10 @@ test('offline gear replay retains transitions, labels all packets demo, and blan
  const replay=replayRecords(rows,fields);assert.equal(replay[2].packet.values.gear,'VEHICLE_COMPONENT_DEPLOYMENT_STATE_RETRACTED');assert.equal(replay.at(-1).packet.stale,true);assert.equal(replay.at(-1).packet.values.gear,null);assert.ok(replay.every(r=>r.packet.source==='demo'));
  assert.throws(()=>replayRecords([{offset_ms:2},{offset_ms:1}],fields),/ordered/);
 });
-test('public recorded snapshots replay observed measurements and the altitude sentinel without private identifiers',()=>{
- for(const name of ['live-4.10.3-character','live-4.10.3-seated']){
+test('public synthetic snapshots preserve unavailable-value semantics without private identifiers',()=>{
+ for(const name of ['character','seated']){
   const sample=JSON.parse(fs.readFileSync(new URL('../data/samples/'+name+'.json',import.meta.url)));
-  assert.equal(sample.provenance.kind,'recorded-sanitized');const output=replayRecords([{offset_ms:0,frame:sample.frame}],fields)[0];assert.equal(output.packet.source,'demo');
+  assert.equal(sample.provenance.kind,'synthetic');const output=replayRecords([{offset_ms:0,frame:sample.frame}],fields)[0];assert.equal(output.packet.source,'demo');
   if(name.endsWith('seated')){assert.equal(output.packet.values.altitude,null);assert.ok(output.packet.values.speed<0.000001);}
   assert.deepEqual(sample.frame,sanitizeFrame(sample.frame));
  }

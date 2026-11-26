@@ -7,6 +7,12 @@ async function ports() {
 }
 $('refresh').onclick = handle(ports);
 $('connect').onclick = handle(async () => {if ($('ports').value) await window.bridge.device($('ports').value, true, $('protocol').value);});
+$('flashMaster').onclick=handle(async()=>{
+  if(!$('confirmMasterFlash').checked)throw Error('Confirm replacing the Master Controller routing firmware first');
+  if($('protocol').value!=='dcsbios-master')throw Error('Select DCSBIOSKit Main / Master Controller and connect its USB port first');
+  $('flashMaster').disabled=true;
+  try{$('result').textContent=(await window.bridge.flashMaster($('ports').value,true)).message;}finally{$('flashMaster').disabled=false;$('confirmMasterFlash').checked=false;}
+});
 $('mode').onchange = handle(async () => {await window.bridge.mode($('mode').value === 'demo'); $('arm').checked = false;});
 $('arm').onchange = handle(() => window.bridge.arm($('arm').checked));
 $('networkEnable').onchange = handle(() => window.bridge.network($('networkEnable').checked));

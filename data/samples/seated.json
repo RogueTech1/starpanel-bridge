@@ -1,0 +1,13 @@
+{
+  "provenance": {"kind": "synthetic", "purpose": "Protocol and unavailable-value test fixture; not recorded gameplay"},
+  "frame": {
+    "vehicle": {"state": {
+      "flight": {
+        "state": {"gear": "VEHICLE_COMPONENT_DEPLOYMENT_STATE_DEPLOYED", "is_landed": true},
+        "instruments": {"speed": 0, "hydrogen_fuel": 0.75, "altitude": 3.4028234663852886e38, "radar_altitude": 12.5, "vertical_speed_indicator": 0}
+      },
+      "power": {"powerplants": true, "engines": false}
+    }},
+    "actor": {"vitals": {"health": {"current": 100, "max": 100}, "oxygen": {"current": 0.8, "max": 1}}}
+  }
+}

@@ -18,7 +18,7 @@ Use this skill for StarPanel Bridge hardware and firmware tasks. Preserve the us
 - Fresh-checkout setup: `docs/REPRODUCING.md`; use `npm run prepare:desktop` for ignored native/upload tools.
 - Data reuse, provenance and offline testing: `docs/DATA-REUSE.md`, `data/README.md`, `src/recordings.mjs` and `src/replay.mjs`. Replays must remain marked demo; synthetic scenarios are not recorded evidence.
 
-Read only the sources needed for the current task. Current code and manifests determine support; board aliases or a compiled image do not prove physical validation. Use `docs/VALIDATION.md` for the tested scope. Do not promise synthetic input acceptance or unobserved telemetry fields.
+For master routing, slave polling/addressing and programming roles, read `docs/DCSBIOSKIT.md`. Read only the sources needed for the current task. Current code and manifests determine support; board aliases or a compiled image do not prove physical validation. Use `docs/VALIDATION.md` for the tested scope. Do not promise synthetic input acceptance or unobserved telemetry fields.
 
 ## Make a panel easy to review
 
@@ -28,7 +28,7 @@ Reuse the project's actual catalog paths and enums. Never invent a game action, 
 
 ## Operational constraints that matter
 
-- DCSBIOSKit **master**, **hub**, **slave/shield** and **programmer** are different roles. Keep vendor master firmware intact. Program disconnected slaves through their programmer. Powered RS485 is not Ethernet; do not connect it to network equipment or hot-plug powered bus cables.
+- DCSBIOSKit **master**, **hub**, **slave/shield** and **programmer** are different roles. Factory-compatible master firmware already routes both directions; a requested master upload/restore must use the dedicated master flow and role-verified image, never a slave/panel image. Program disconnected slaves through their programmer. Powered RS485 is not Ethernet; do not connect it to network equipment or hot-plug powered bus cables.
 - Board replacement requires a concrete, identified target and the user's programming request. If they already authorized programming that board, proceed without asking again. Do not flash every detected COM port or infer a board from a COM number alone. Chip/flash/signature checks must remain enabled.
 - Use conservative GPIO lists from the exact profile. Reserve USB, I2C, boot/flash and bus pins. An ESP32 cannot accept a 5 V input. LED-chain count and brightness do not establish supply capacity.
 - JSON panels: 115200 baud USB or paired TCP 2943. Arduino runtime: 250000 baud DCS-BIOS framing. Game telemetry: loopback gRPC 2942. Do not confuse those ports/protocols.

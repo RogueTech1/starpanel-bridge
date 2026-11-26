@@ -43,7 +43,7 @@ Use the [Getting Started Kit](https://dcsbioskit.com/product/getting-started-kit
 | Slave Programmer | Programming a disconnected slave | [Instructions](https://dcsbioskit.com/instructions/) |
 | RS485 DevKit | Bench experimentation | [DevKit](https://dcsbioskit.com/product/dcs-bios-rs485-devkit/) |
 
-Topology: **PC USB → vendor master → vendor hubs/buses → unique-address slaves → local switches/display**. Keep the master firmware supplied by the vendor. StarPanel's slave firmware uses a private Star Citizen memory map; existing DCS aircraft sketches do not automatically become Star Citizen panels. Do not run a DCS aircraft export and StarPanel into the same master simultaneously.
+Topology: **PC USB → vendor master → vendor hubs/buses → unique-address slaves → local switches/display**. The factory master firmware already routes compatible traffic; use the dedicated master upload/restore flow if needed. StarPanel's slave firmware uses a private Star Citizen memory map; existing DCS aircraft sketches do not automatically become Star Citizen panels. Do not run a DCS aircraft export and StarPanel into the same master simultaneously.
 
 Follow the exact revision's labels and [manufacturer instructions](https://dcsbioskit.com/instructions/). Powered RS485 connectors are **not Ethernet**. Never connect them to a PC network port, switch or router. Do not hot-plug powered bus cables. Never connect slave USB/programmer and its powered bus at the same time. Mega shield backlighting reserves pins 4/5; RS485 TX-enable reserves pin 2. The designer excludes these for vendor profiles.
 
@@ -78,6 +78,6 @@ Uno R3 and Uno R4 have different processors; classic Nano, Nano Every and Nano E
 
 ## Master, hub, slave and standalone roles in the app
 
-Choose **DCSBIOSKit Main / Master Controller** when attaching the vendor master's runtime USB port. The app remembers that COM port as protected and blocks panel/slave firmware uploads to it. The master routes traffic and keeps vendor firmware; it is not a programmable panel-design target here. Hubs distribute bus/power and have no StarPanel upload operation. Nano/Mega slaves and shields are programmable design targets, through a separate programmer while disconnected from the powered bus.
+Choose **DCSBIOSKit Main / Master Controller** when attaching the vendor master's runtime USB port. The app remembers that COM port as protected and blocks panel/slave firmware uploads to it. The master routes traffic and has a dedicated vendor-compatible firmware upload/restore flow, separate from panel designs. Hubs distribute bus/power and have no StarPanel upload operation. Nano/Mega slaves and shields are programmable design targets, through a separate programmer while disconnected from the powered bus.
 
 Standalone Arduino boards each have their own USB runtime link. ESP32 panels each connect independently to the PC by USB or Wi-Fi; they are not automatically DCSBIOSKit-compatible RS485 subboards and no ESP32-to-ESP32 master routing is implemented. You can mix these independent panels with a vendor master in the same running app, within the documented alias/client limits.

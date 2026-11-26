@@ -22,14 +22,14 @@
       "sha256": "26fc796bf0432b8d7b0320131bbe67cc0ea4333cad84548d3dea1202355467b9"
     },
     {
-      "path": "data/samples/live-4.10.3-character.json",
-      "bytes": 543,
-      "sha256": "43e2291a3c72e8b9770ee568727fc1c43b4ae2c9b737a9f8b83c04ffc2430d4c"
+      "path": "data/samples/character.json",
+      "bytes": 215,
+      "sha256": "c6ef34b0244268b2f48e3f6edb7ce86723bac6741597e1929ee50afe190e0ec0"
     },
     {
-      "path": "data/samples/live-4.10.3-seated.json",
-      "bytes": 1584,
-      "sha256": "9b5c9473541b4ac3332bbbf74ad0ca4bcbbe4aef7ee9b4a4af39414b1d0df9fc"
+      "path": "data/samples/seated.json",
+      "bytes": 604,
+      "sha256": "14188f823dde80b51e9cc373fddb8156231d08f51eae62457cf706a08e5c05d0"
     },
     {
       "path": "data/scenarios/gear-cycle.ndjson",

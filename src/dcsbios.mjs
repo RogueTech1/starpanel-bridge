@@ -1,8 +1,14 @@
 import {randomUUID} from 'node:crypto';
-import {Lines} from './panel.mjs';
+import {Lines,atPath} from './panel.mjs';
 
 // Private Star Citizen address map; do not mix with a DCS aircraft export session.
 export const BIOS_MAP = {status: 0x5000, lamps: 0x5002, speed: 0x5010, altitude: 0x5020, gear: 0x5030, oxygen: 0x5040};
+export const BIOS_FIELDS=Object.freeze({
+ 'vehicle.state.flight.instruments.speed':{alias:'speed',address:BIOS_MAP.speed,bytes:8,format:'ASCII',bufferLength:7},
+ 'vehicle.state.flight.instruments.altitude':{alias:'altitude',address:BIOS_MAP.altitude,bytes:10,format:'ASCII',bufferLength:9},
+ 'vehicle.state.flight.state.gear':{alias:'gear',address:BIOS_MAP.gear,bytes:12,format:'ASCII',bufferLength:11},
+ 'actor.vitals.oxygen.current':{alias:'oxygen',address:BIOS_MAP.oxygen,bytes:8,format:'ASCII',bufferLength:7}
+});
 function block(address, data) {
   const header = Buffer.alloc(4); header.writeUInt16LE(address); header.writeUInt16LE(data.length, 2);
   return Buffer.concat([header, data]);
@@ -13,7 +19,7 @@ function text(value, size) {
 }
 export function encodeBios(packet) {
   const v = packet.values, valid = !packet.stale && packet.connected;
-  const gear = valid ? v.gear?.replace('VEHICLE_COMPONENT_DEPLOYMENT_STATE_', '') : null;
+  const gear = valid&&typeof v.gear==='string' ? v.gear.replace('VEHICLE_COMPONENT_DEPLOYMENT_STATE_', '') : null;
   const lamps = valid ? ((gear === 'DEPLOYED' ? 1 : 0) | (v.lights === true ? 2 : 0) | (gear != null ? 4 : 0) | (v.lights != null ? 8 : 0)) : 0;
   return Buffer.concat([Buffer.from([0x55, 0x55, 0x55, 0x55]),
     block(BIOS_MAP.status, word((valid ? 1 : 0) | (packet.source === 'demo' ? 2 : 0))),
@@ -54,7 +60,9 @@ export class DcsBiosPanel {
   send(packet) {
     if (!this.port?.isOpen || this.busy) return;
     this.busy = true;
-    this.port.write(encodeBios(packet), err => {
+    const raw=this.bridge.panel.frame;
+    const values={...Object.fromEntries(Object.entries(BIOS_FIELDS).map(([field,meta])=>[meta.alias,atPath(raw,field)])),lights:atPath(raw,'vehicle.state.lights_enabled')};
+    this.port.write(encodeBios({...packet,values}), err => {
       if (err) {this.busy = false; this.bridge.log(`${this.path}: ${err.message}`);}
       else this.port.drain(() => {this.busy = false;});
     });

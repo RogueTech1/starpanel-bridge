@@ -16,7 +16,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: uv run --with platformio --with esptool==4.9.0 pio run -d firmware -e esp32s3 -e esp32 -e esp32c3 -e esp32s3-wifi -e esp32-wifi -e esp32c3-wifi -e esp32c3supermini -e esp32s2mini
-      - run: uv run --with platformio pio run -d firmware-dcsbios -e mega-panel -e nano-panel -e mega-standalone -e nano-standalone -e uno-standalone -e leonardo-standalone -e micro-standalone -e promicro-standalone
+      - run: uv run --with platformio pio run -d firmware-dcsbios -e dcsbioskit-master -e mega-panel -e nano-panel -e mega-standalone -e nano-standalone -e uno-standalone -e leonardo-standalone -e micro-standalone -e promicro-standalone
       - run: uv run --with platformio pio pkg install --global --tool 'platformio/tool-avrdude@~1.60300.0'
       - run: npm run firmware:package
       - shell: powershell

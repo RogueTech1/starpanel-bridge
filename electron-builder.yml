@@ -9,6 +9,11 @@ files:
   - src/**/*
   - panel.json
   - package.json
+  - '!**/node_modules/**/README*'
+  - '!**/node_modules/**/CHANGELOG*'
+  - '!**/node_modules/**/HISTORY*'
+  - '!**/node_modules/**/test{,s}/**'
+  - '!**/node_modules/**/examples/**'
 extraResources:
   - from: schema/live/sc_extrait.desc
     to: schema/telemetry.desc

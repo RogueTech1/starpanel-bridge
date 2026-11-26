@@ -33,7 +33,7 @@ Import [`dcsbioskit-mega-slave-1.starpanel.json`](../examples/dcsbioskit-mega-sl
 1. Power down/disconnect the relevant slave from the bus. Connect only its programmer.
 2. Select that slave's design and its programmer COM port. Upload firmware plus EEPROM design. Repeat for the other slave.
 3. Disconnect programmers. Wire the vendor bus with power off, then power it according to vendor instructions.
-4. Connect the master's USB runtime port to StarPanel as **DCSBIOSKit Main / Master Controller**. This marks the port as protected from panel firmware uploads. Keep its original firmware.
+4. Connect the master's USB runtime port to StarPanel as **DCSBIOSKit Main / Master Controller**. This marks the port as protected from panel firmware uploads. The factory routing firmware works; use the [dedicated master flow](DCSBIOSKIT.md#program-or-restore-the-master) if restoring/reprogramming it.
 5. Confirm fresh outputs before enabling controls. Use unique addresses for every additional slave. Do not run a DCS aircraft export into that master simultaneously.
 
 Master/hub behavior follows the vendor protocol and the adapter implementation; this topology still needs physical bus validation. Standard Arduino USB or ESP32 panels can run alongside the master as separate host connections.

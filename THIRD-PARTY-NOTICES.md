@@ -23,7 +23,7 @@ Community telemetry research and extraction tooling: [Sokren / sc-telemetry-deck
 | DCSBIOSKit Arduino library | AVR DCS-BIOS interface | MIT, pinned fork `fa7f4dddabd20322cc1309ca0021eb0dd5428313`, [source](https://github.com/DCSBIOSKit/dcs-bios-arduino-library) |
 | avrdude 6.3 / Windows libusb | AVR programming | GPL-2.0-or-later and libusb notices, [avrdude 6.3 source](https://github.com/avrdudes/avrdude/tree/v6.3), [PlatformIO tool package](https://registry.platformio.org/tools/platformio/tool-avrdude) |
 
-Full discovered license texts are collected under `licenses/` in the repository and bundled documentation resources. Firmware source/build configuration is included here; release source archives include available dependency source and build instructions. Compiler/tool packages can be fetched at the exact versions pinned by the PlatformIO build. Individual upstream notices take precedence over this summary.
+Bundled dependency license texts are collected under `licenses/` in the repository and bundled documentation resources. Firmware source/build configuration is included here; release source archives include available dependency source and build instructions. Compiler/tool packages can be fetched at the exact versions pinned by the PlatformIO build. Individual upstream notices take precedence over this summary.
 
 ## DCS-BIOS Arduino library notice
 
@@ -36,3 +36,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[BORT](https://github.com/charliefoxtwo/Bort) is referenced as context for address/control discovery. No BORT code is bundled or required by StarPanel Bridge.

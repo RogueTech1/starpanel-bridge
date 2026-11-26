@@ -25,7 +25,7 @@ From the repository root:
 
 ```powershell
 uv run --with platformio --with esptool==4.9.0 pio run -d firmware -e esp32s3 -e esp32 -e esp32c3 -e esp32s3-wifi -e esp32-wifi -e esp32c3-wifi -e esp32c3supermini -e esp32s2mini
-uv run --with platformio pio run -d firmware-dcsbios -e mega-panel -e nano-panel -e mega-standalone -e nano-standalone -e uno-standalone -e leonardo-standalone -e micro-standalone -e promicro-standalone
+uv run --with platformio pio run -d firmware-dcsbios -e dcsbioskit-master -e mega-panel -e nano-panel -e mega-standalone -e nano-standalone -e uno-standalone -e leonardo-standalone -e micro-standalone -e promicro-standalone
 uv run --with platformio pio pkg install --global --tool 'platformio/tool-avrdude@~1.60300.0'
 npm run firmware:package
 ```
@@ -47,7 +47,6 @@ The NSIS installer is written to `dist/StarPanel-Bridge-Setup-<version>.exe`. Up
 
 Run `dist/win-unpacked/StarPanel Bridge.exe --smoke-test` to exercise simulator controls, the designer, separate mappings, tray hiding/reopening and UI rendering. It uses an isolated smoke profile. `--live-check` uses another isolated profile, reads 30 real game frames and writes a screenshot/report under its `validation` subdirectory. It never sends game controls. Inspect reports and screenshots; passing unit tests alone is not a physical hardware test.
 
-Hardware script `scripts/supermini-gear-test.mjs --flash` **replaces COM3 firmware**, programs the seven-pixel GPIO 3 design, briefly sends simulated gear states to the physical board and restores live telemetry. This is a local acceptance helper, not an unattended CI task. Set `STARPANEL_TEST_PORT` for a different known board. Do not run it against an unidentified COM port or while the app owns that port. It updates the local test user's app-data design/settings, so use a dedicated test profile or back up your app data.
 
 ## Telemetry schema provenance
 
@@ -60,7 +59,7 @@ For personal schema investigation, obtain [Sokren's extractor](https://github.co
 The repository includes Windows CI tests and a manual release-artifact build workflow. A release maintainer should:
 
 1. Update package version, changelog, validation matrix and documentation.
-2. Build all firmware and native tools, run tests and audit production dependencies.
+2. Build all firmware and native tools, run tests and audit runtime/build dependencies and scan public files/history.
 3. Smoke-test the packaged UI, inspect screenshots and install-test the NSIS package. Run the installed real-feed check when the game is running, and state separately when it was unavailable.
 4. Perform hardware acceptance for the profiles being claimed physically tested.
 5. Generate SHA-256 checksums and third-party notices/source archive.

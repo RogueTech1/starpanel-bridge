@@ -36,7 +36,7 @@
     for(const f of fields){const category=outputGroup(f.path);if(!`${f.path} ${category}`.toLowerCase().includes(q))continue;
       const v=snapshot.packet.stale?null:value(f.path);const raw=v===null?'Not received':JSON.stringify(v).slice(0,160);
       const mapped=Object.entries(snapshot.config.fields).filter(([,path])=>path===f.path).map(([alias])=>alias);
-      row(group(el('outputGroups'),category),f.path,`${f.type}${f.repeated?'[]':''} · ${raw}${mapped.length?' · Mapped: '+mapped.join(', '):''}`);
+      row(group(el('outputGroups'),category),f.path,`${f.type}${f.repeated?'[]':''} · ${raw}${f.bios?' · StarPanel RS485 0x'+f.bios.address.toString(16)+' · '+f.bios.bytes+'-byte '+f.bios.format:''}${mapped.length?' · Mapped: '+mapped.join(', '):''}`);
     }
   }
   el('mappingSearch').oninput=draw;

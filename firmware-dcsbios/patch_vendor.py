@@ -20,6 +20,5 @@ def fix(*args, **kwargs):
         elif len(matches) != 1:
             raise RuntimeError("Unexpected vendor source; review duplicate-definition patch")
 fix()
-env.AddPreAction("$BUILD_DIR/src/main.cpp.o", fix)
-env.AddPreAction("$BUILD_DIR/src/example-generated.cpp.o", fix)
+env.AddPreAction("$BUILD_DIR/src/master.cpp.o", fix)
 env.AddPreAction("$BUILD_DIR/src/configured.cpp.o", fix)

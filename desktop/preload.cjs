@@ -12,5 +12,5 @@ contextBridge.exposeInMainWorld('bridge', {
   panels:()=>ipcRenderer.invoke('panels'),savePanel:p=>ipcRenderer.invoke('save-panel',p),
   programPanel:(id,port,wifi)=>ipcRenderer.invoke('program-panel',id,port,wifi),
   flash:(port,profile,confirmed)=>ipcRenderer.invoke('flash',port,profile,confirmed)
-  ,exportSketch:id=>ipcRenderer.invoke('export-sketch',id)
+  ,flashMaster:(port,confirmed)=>ipcRenderer.invoke('flash-master',port,confirmed)
 });
